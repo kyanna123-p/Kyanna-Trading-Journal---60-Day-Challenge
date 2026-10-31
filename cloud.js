@@ -106,19 +106,57 @@ async function cloudToggleAuto(){
    if(!remote && cloudRevision!==null)throw Error('Cloud copy missing. Upload this device first.');
    if(cloudRevision===null)throw Error('Upload or download a cloud copy first.');
    cloudAutoEnabled=true;
-   cloudMessage('Automatic saving enabled. Edit a note and tap outside the field.');
+   cloudMessage('Automatic sync enabled. Edits upload; other-device changes refresh automatically.');
    if(cloudDirty)cloudSchedule();
   }catch(e){cloudAutoEnabled=false;cloudMessage('Automatic saving unavailable: '+e.message);}
  }
  const button=document.getElementById('cloudAutoButton');
  if(button)button.textContent=cloudAutoEnabled?'Pause automatic saving':'Enable automatic saving';
 }
+
+/* Read-only cloud refresh: only replace local data if there are no pending edits. */
+let cloudPollBusy=false;
+async function cloudRefresh(){
+ if(!cloudAutoEnabled||cloudBusy||cloudPollBusy||cloudDirty||!cloudUser||cloudRevision===null)return;
+ if(document.visibilityState==='hidden')return;
+ cloudPollBusy=true;
+ try{
+  await cloudInit();
+  if(!cloudUser)return;
+  const {data:row,error}=await cloudClient.from('challenge_snapshots').select('payload,revision').eq('user_id',cloudUser.id).maybeSingle();
+  if(error)throw error;
+  if(!row||row.revision===cloudRevision)return;
+  if(cloudDirty||cloudBusy)return;
+  const copy=row.payload;
+  for(const type of ['trades','studies'])for(const item of copy[type]||[]){
+   if(!item.image?.startsWith('storage:'))continue;
+   const path=item.image.slice(8);
+   const {data:blob,error:imgErr}=await cloudClient.storage.from('challenge-charts').download(path);
+   if(imgErr)throw imgErr;
+   item.image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob)});
+  }
+  if(cloudDirty||cloudBusy)return;
+  data=copy;
+  for(const k of Object.keys(blank()))if(!data[k])data[k]=blank()[k];
+  cloudIgnoreSave=true;
+  try{save()}finally{cloudIgnoreSave=false}
+  cloudRevision=row.revision;
+  localStorage.setItem('tradecraftCloudRevision:'+cloudUser.id,String(cloudRevision));
+  render();
+  cloudMessage('Cloud changes received. Revision '+cloudRevision+'.');
+ }catch(e){cloudMessage('Cloud refresh stopped: '+e.message)}
+ finally{cloudPollBusy=false}
+}
+setInterval(cloudRefresh,10000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')cloudRefresh()});
+window.addEventListener('focus',cloudRefresh);
+
 const renderCloudSettings=renderSettings;
 renderSettings=function(){
  renderCloudSettings();
  const status=document.getElementById('cloudStatus');
  if(!status||document.getElementById('cloudAutoButton'))return;
  status.textContent=cloudLastMessage;
- status.insertAdjacentHTML('beforebegin','<div class="actions"><button id="cloudAutoButton" class="btn secondary" onclick="cloudToggleAuto()">${cloudAutoEnabled?'Pause automatic saving':'Enable automatic saving'}</button></div><p class="muted">Automatic saving is opt-in per open tab. Changes upload after 2 seconds of inactivity. For changes from another device, use Download cloud copy before editing. Conflicts stop uploads rather than overwriting newer data.</p>');
+ status.insertAdjacentHTML('beforebegin','<div class="actions"><button id="cloudAutoButton" class="btn secondary" onclick="cloudToggleAuto()">${cloudAutoEnabled?'Pause automatic saving':'Enable automatic saving'}</button></div><p class="muted">Automatic sync runs while this tab is open. Changes upload after 2 seconds; other-device changes are checked about every 10 seconds. Pending local edits are never replaced by automatic refresh.</p>');
 };
 renderSettings();

@@ -10,7 +10,8 @@ async function cloudInit(){
   const {data:{session},error}=await cloudClient.auth.getSession();if(error)throw error;
   cloudUser=session?.user||null;if(cloudUser && cloudRevision===null){const v=localStorage.getItem('tradecraftCloudRevision:'+cloudUser.id);if(v!==null)cloudRevision=Number(v);}return cloudClient;
 }
-function cloudMessage(s){const el=document.getElementById('cloudStatus');if(el)el.textContent=s;}
+let cloudLastMessage='Not connected. See README for setup.';
+function cloudMessage(s){cloudLastMessage=s;const el=document.getElementById('cloudStatus');if(el)el.textContent=s;}
 function saveCloudConfig(){
  const url=document.getElementById('supabaseUrl').value.trim().replace(/\/$/,'');
  const key=document.getElementById('supabaseKey').value.trim();
@@ -68,7 +69,7 @@ async function cloudDownload(){try{
 const originalRenderSettings=renderSettings;
 renderSettings=function(){originalRenderSettings();const cfg=cloudCfg();const settings=document.getElementById('settings');settings.insertAdjacentHTML('afterbegin',`<div class="panel" style="margin-bottom:16px"><h2>☁ Cloud Sync — Supabase</h2><p>Sync securely between devices. Manual upload/download prevents accidental overwrites. <b>Export a JSON backup before the first sync.</b></p><div class="inline2"><div class="field"><label>Project URL</label><input id="supabaseUrl" placeholder="https://your-project.supabase.co" value="${esc(cfg.url||'')}"></div><div class="field"><label>Publishable / anon key (never service-role)</label><input id="supabaseKey" type="password" placeholder="sb_publishable_..." value="${esc(cfg.key||'')}"></div></div><button class="btn secondary" onclick="saveCloudConfig()">Save connection</button><div class="inline2" style="margin-top:14px"><div class="field"><label>Email</label><input id="cloudEmail" type="email" autocomplete="email"></div><div class="field"><label>Password</label><input id="cloudPassword" type="password" autocomplete="current-password"></div></div><div class="actions"><button class="btn secondary" onclick="cloudAuth('signup')">Create account</button><button class="btn" onclick="cloudAuth('signin')">Sign in</button><button class="btn secondary" onclick="cloudSignOut()">Sign out</button></div><hr style="opacity:.2;margin:16px 0"><div class="actions"><button class="btn" onclick="cloudUpload()">↑ Upload this device</button><button class="btn secondary" onclick="cloudDownload()">↓ Download cloud copy</button></div><p id="cloudStatus" class="muted" role="status">Not connected. See README for setup.</p><p class="muted">Images are stored privately in Supabase Storage. Cloud data is not automatically merged. Requires an HTTPS-hosted page.</p></div>`)};
 renderSettings();
-cloudMessage('Connection settings loaded. Save connection, then create an account or sign in.');
+cloudMessage('Connection settings loaded. Sign in if needed, then enable automatic saving.');
 
 
 /* Opt-in automatic cloud uploads. Never silently replace local records. */
@@ -117,6 +118,7 @@ renderSettings=function(){
  renderCloudSettings();
  const status=document.getElementById('cloudStatus');
  if(!status||document.getElementById('cloudAutoButton'))return;
+ status.textContent=cloudLastMessage;
  status.insertAdjacentHTML('beforebegin','<div class="actions"><button id="cloudAutoButton" class="btn secondary" onclick="cloudToggleAuto()">Enable automatic saving</button></div><p class="muted">Automatic saving is opt-in per open tab. Changes upload after 2 seconds of inactivity. For changes from another device, use Download cloud copy before editing. Conflicts stop uploads rather than overwriting newer data.</p>');
 };
 renderSettings();

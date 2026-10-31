@@ -82,21 +82,32 @@ save=function(){
 };
 function cloudSchedule(){
  clearTimeout(cloudTimer);
- if(!cloudAutoEnabled||!cloudUser||cloudRevision===null)return;
+ if(!cloudAutoEnabled)return;
  cloudTimer=setTimeout(async()=>{
   if(cloudBusy){cloudSchedule();return;}
   if(!cloudDirty)return;
   await cloudUpload();
  },1800);
 }
-function cloudToggleAuto(){
- cloudAutoEnabled=!cloudAutoEnabled;
- if(cloudAutoEnabled && (!cloudUser||cloudRevision===null)){
+async function cloudToggleAuto(){
+ if(cloudAutoEnabled){
   cloudAutoEnabled=false;
-  cloudMessage('Sign in and upload or download a cloud copy first, then enable automatic saving.');
+  clearTimeout(cloudTimer);
+  cloudMessage('Automatic saving paused.');
  }else{
-  cloudMessage(cloudAutoEnabled?'Automatic saving enabled on this device.':'Automatic saving paused on this device.');
-  if(cloudAutoEnabled && cloudDirty)cloudSchedule();
+  try{
+   cloudMessage('Connecting automatic saving...');
+   await cloudInit();
+   if(!cloudUser)throw Error('Sign in first.');
+   const {data:remote,error}=await cloudClient.from('challenge_snapshots').select('revision').eq('user_id',cloudUser.id).maybeSingle();
+   if(error)throw error;
+   if(remote && cloudRevision!==remote.revision)throw Error('Cloud copy is newer. Download cloud copy before enabling automatic saving.');
+   if(!remote && cloudRevision!==null)throw Error('Cloud copy missing. Upload this device first.');
+   if(cloudRevision===null)throw Error('Upload or download a cloud copy first.');
+   cloudAutoEnabled=true;
+   cloudMessage('Automatic saving enabled. Edit a note and tap outside the field.');
+   if(cloudDirty)cloudSchedule();
+  }catch(e){cloudAutoEnabled=false;cloudMessage('Automatic saving unavailable: '+e.message);}
  }
  const button=document.getElementById('cloudAutoButton');
  if(button)button.textContent=cloudAutoEnabled?'Pause automatic saving':'Enable automatic saving';

@@ -1,0 +1,1 @@
+No font binaries are included. The app uses system font fallbacks (Georgia, Segoe UI, Brush Script MT, etc.) to avoid licensing and downloads. To add a licensed webfont later, place permitted WOFF2 files here and reference them using @font-face.

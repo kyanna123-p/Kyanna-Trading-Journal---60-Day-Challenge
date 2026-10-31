@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 700" role="img" aria-labelledby="title desc">
+<title id="title">Kyanna Trading OS crowned lion</title><desc id="desc">Full uncropped regal lion head with golden crown, amethyst mane and neon pink and gold highlights on a transparent background.</desc>
+<defs>
+ <linearGradient id="gold" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#fff6c6"/><stop offset=".24" stop-color="#ffd17c"/><stop offset=".57" stop-color="#db8c36"/><stop offset="1" stop-color="#7b3b20"/></linearGradient>
+ <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ed8de9"/><stop offset=".3" stop-color="#a94cbe"/><stop offset=".65" stop-color="#4b236e"/><stop offset="1" stop-color="#140e2d"/></linearGradient>
+ <linearGradient id="fur" x1=".12" y1="0" x2=".9" y2="1"><stop stop-color="#f7c37d"/><stop offset=".28" stop-color="#b97a61"/><stop offset=".64" stop-color="#67405f"/><stop offset="1" stop-color="#27152e"/></linearGradient>
+ <linearGradient id="face" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4c18b"/><stop offset=".44" stop-color="#b47b72"/><stop offset=".75" stop-color="#72516a"/><stop offset="1" stop-color="#38233d"/></linearGradient>
+ <radialGradient id="gem"><stop stop-color="#ffd4ff"/><stop offset=".35" stop-color="#e45bea"/><stop offset="1" stop-color="#5a1e8a"/></radialGradient>
+ <filter id="halo" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="9"/></filter>
+ <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+</defs>
+<!-- Subtle neon aura; background remains transparent -->
+<ellipse cx="300" cy="374" rx="202" ry="258" fill="#a631b5" opacity=".2" filter="url(#halo)"/>
+<!-- Complete mane silhouette -->
+<path d="M300 141 C239 116 183 141 157 181 C105 178 74 226 87 272 C42 309 46 362 77 401 C48 447 76 496 114 516 C100 563 147 603 194 596 C210 639 255 659 300 640 C345 659 390 639 406 596 C453 603 500 563 486 516 C524 496 552 447 523 401 C554 362 558 309 513 272 C526 226 495 178 443 181 C417 141 361 116 300 141 Z" fill="url(#purple)" stroke="#d779d5" stroke-width="5"/>
+<!-- Mane strands, balanced, individually contained -->
+<g fill="url(#fur)" stroke="#3b183e" stroke-width="3" stroke-linejoin="round">
+<path d="M223 158 Q121 181 109 281 Q151 253 180 264 Q105 322 92 409 Q153 376 176 388 Q117 456 135 528 Q196 482 210 450 Q164 544 201 603 Q246 561 261 492 L274 246Z"/>
+<path d="M377 158 Q479 181 491 281 Q449 253 420 264 Q495 322 508 409 Q447 376 424 388 Q483 456 465 528 Q404 482 390 450 Q436 544 399 603 Q354 561 339 492 L326 246Z"/>
+<path d="M241 195 Q169 229 157 322 Q198 294 223 301 Q167 379 188 457 Q220 425 235 402 Q212 503 244 562 Q281 517 300 455 L300 205Z"/>
+<path d="M359 195 Q431 229 443 322 Q402 294 377 301 Q433 379 412 457 Q380 425 365 402 Q388 503 356 562 Q319 517 300 455 L300 205Z"/>
+</g>
+<g fill="none" stroke="#f2a75b" stroke-width="5" opacity=".75" stroke-linecap="round">
+<path d="M206 180 Q132 235 129 292 M165 332 Q111 400 122 443 M173 492 Q155 540 181 566 M394 180 Q468 235 471 292 M435 332 Q489 400 478 443 M427 492 Q445 540 419 566"/>
+</g>
+<g fill="none" stroke="#e078e3" stroke-width="4" opacity=".8" stroke-linecap="round"><path d="M222 242 Q177 306 194 371 M378 242 Q423 306 406 371 M235 454 Q224 509 249 544 M365 454 Q376 509 351 544"/></g>
+<!-- Ears -->
+<path d="M188 243 Q151 206 158 174 Q210 183 235 229Z M412 243 Q449 206 442 174 Q390 183 365 229Z" fill="url(#fur)" stroke="#edb36b" stroke-width="5"/>
+<path d="M192 218 Q176 195 174 194 Q202 201 213 225Z M408 218 Q424 195 426 194 Q398 201 387 225Z" fill="#5b254e"/>
+<!-- Face and cheeks -->
+<path d="M300 202 C254 197 213 231 211 294 Q205 345 227 398 Q225 456 260 490 Q278 520 300 535 Q322 520 340 490 Q375 456 373 398 Q395 345 389 294 C387 231 346 197 300 202Z" fill="url(#face)" stroke="#43253c" stroke-width="5"/>
+<path d="M300 226 Q269 254 262 313 Q274 344 300 351 Q326 344 338 313 Q331 254 300 226Z" fill="#f2bb84" opacity=".24"/>
+<!-- Eyes and brows -->
+<path d="M222 308 Q256 287 286 314 Q255 336 226 321Z M378 308 Q344 287 314 314 Q345 336 374 321Z" fill="#24172d"/>
+<path d="M237 316 Q259 307 277 315 M363 316 Q341 307 323 315" fill="none" stroke="#f5c35b" stroke-width="6" stroke-linecap="round"/>
+<path d="M221 292 Q251 275 282 296 M379 292 Q349 275 318 296" fill="none" stroke="#4a2c40" stroke-width="11" stroke-linecap="round"/>
+<path d="M230 291 Q254 279 281 294 M370 291 Q346 279 319 294" fill="none" stroke="#edbd7b" stroke-width="3" stroke-linecap="round"/>
+<!-- Muzzle -->
+<path d="M300 348 Q268 356 255 389 Q245 423 273 449 Q289 458 300 447 Q311 458 327 449 Q355 423 345 389 Q332 356 300 348Z" fill="#dba993" stroke="#5c3c4b" stroke-width="4"/>
+<path d="M260 394 Q281 379 300 397 Q319 379 340 394" fill="none" stroke="#f4d3b1" stroke-width="5"/>
+<path d="M273 384 Q300 370 327 384 Q323 401 300 409 Q277 401 273 384Z" fill="#342334" stroke="#e4a783" stroke-width="3"/>
+<path d="M300 408 L300 428 M300 428 Q280 449 259 430 M300 428 Q320 449 341 430" fill="none" stroke="#43273c" stroke-width="5" stroke-linecap="round"/>
+<g fill="#f7d5b4"><circle cx="267" cy="414" r="2.6"/><circle cx="256" cy="424" r="2.3"/><circle cx="333" cy="414" r="2.6"/><circle cx="344" cy="424" r="2.3"/></g>
+<!-- Chin -->
+<path d="M266 459 Q277 498 300 517 Q323 498 334 459 Q315 477 300 475 Q285 477 266 459Z" fill="#4a2a4b" stroke="#d49b84" stroke-width="3"/>
+<!-- Crown: fully inside the viewbox -->
+<g stroke="#8e4c24" stroke-width="5" stroke-linejoin="round">
+<path d="M187 173 L176 83 L234 119 L259 57 L300 111 L341 57 L366 119 L424 83 L413 173Z" fill="url(#gold)"/>
+<path d="M187 155 Q300 169 413 155 L411 193 Q300 210 189 193Z" fill="url(#gold)"/>
+</g>
+<path d="M200 161 Q300 174 400 161" stroke="#fff4c5" stroke-width="5" fill="none" opacity=".85"/>
+<g fill="url(#gem)" stroke="#ffd7a6" stroke-width="3"><path d="M300 132 L316 154 L300 176 L284 154Z"/><circle cx="228" cy="171" r="9"/><circle cx="372" cy="171" r="9"/></g>
+<g fill="#fff0b8" stroke="#e6a65d" stroke-width="3"><circle cx="176" cy="80" r="9"/><circle cx="259" cy="53" r="9"/><circle cx="341" cy="53" r="9"/><circle cx="424" cy="80" r="9"/><circle cx="300" cy="106" r="8"/></g>
+<g fill="none" stroke="#fff4cd" stroke-width="2.5" opacity=".65"><path d="M195 144 L186 98 M247 117 L259 72 M353 117 L341 72 M405 144 L414 98"/></g>
+<!-- A few star accents, kept away from edges -->
+<g stroke="#ffd994" stroke-width="3" stroke-linecap="round"><path d="M88 167 v22 m-11 -11 h22 M506 181 v22 m-11 -11 h22 M459 561 v18 m-9 -9 h18"/></g>
+</svg>

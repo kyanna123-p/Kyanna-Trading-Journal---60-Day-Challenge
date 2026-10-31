@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 490" role="img" aria-labelledby="title desc">
+<title id="title">Kyanna crowned neon club</title><desc id="desc">Complete gold-outlined purple club emblem with a jeweled crown, neon glow, and ornamental light trails on transparent background.</desc>
+<defs>
+ <linearGradient id="gold" x1=".1" y1="0" x2=".9" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#fff5bf"/><stop offset=".2" stop-color="#ffcf72"/><stop offset=".48" stop-color="#ef9c36"/><stop offset=".72" stop-color="#fff0a1"/><stop offset="1" stop-color="#ad5721"/></linearGradient>
+ <radialGradient id="amethyst" cx="50%" cy="48%" r="63%"><stop stop-color="#ae36d9"/><stop offset=".36" stop-color="#5e178b"/><stop offset=".72" stop-color="#240d40"/><stop offset="1" stop-color="#0c081d"/></radialGradient>
+ <radialGradient id="innerGlow"><stop stop-color="#ff91f9" stop-opacity=".9"/><stop offset=".3" stop-color="#b62aff" stop-opacity=".48"/><stop offset="1" stop-color="#6410b9" stop-opacity="0"/></radialGradient>
+ <filter id="aura" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="10"/></filter>
+ <filter id="shine" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="3"/></filter>
+ <path id="club" d="M210 109 C158 109 128 148 128 194 C128 207 131 221 137 233 C122 225 105 221 88 221 C47 221 24 256 24 293 C24 336 58 371 101 371 C130 371 151 360 171 342 C169 376 152 410 124 436 L296 436 C268 410 251 376 249 342 C269 360 290 371 319 371 C362 371 396 336 396 293 C396 256 373 221 332 221 C315 221 298 225 283 233 C289 221 292 207 292 194 C292 148 262 109 210 109 Z"/>
+</defs>
+<!-- halo, fully inside viewBox -->
+<use href="#club" fill="none" stroke="#9d22ef" stroke-width="21" opacity=".65" filter="url(#aura)"/>
+<use href="#club" fill="url(#amethyst)" stroke="#5b1a65" stroke-width="15" stroke-linejoin="round"/>
+<use href="#club" fill="none" stroke="url(#gold)" stroke-width="9" stroke-linejoin="round"/>
+<use href="#club" fill="none" stroke="#ffe5a0" stroke-width="2" opacity=".9"/>
+<!-- internal decorative lobes -->
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M210 136 C166 137 154 176 167 209 C181 244 210 263 210 294 C210 263 239 244 253 209 C266 176 254 137 210 136Z" stroke="#dc75ff" stroke-width="3" opacity=".7"/>
+<path d="M72 283 C104 255 143 275 164 300 C183 322 197 336 210 338 C181 341 156 354 128 347 C90 339 70 319 72 283Z" stroke="#b75cf3" stroke-width="3" opacity=".8"/>
+<path d="M348 283 C316 255 277 275 256 300 C237 322 223 336 210 338 C239 341 264 354 292 347 C330 339 350 319 348 283Z" stroke="#b75cf3" stroke-width="3" opacity=".8"/>
+<path d="M210 170 L210 356 M102 299 Q164 303 210 340 Q256 303 318 299" stroke="#f5a7ff" stroke-width="2" opacity=".55"/>
+</g>
+<ellipse cx="210" cy="297" rx="107" ry="110" fill="url(#innerGlow)" opacity=".7"/>
+<g stroke="#e28bff" stroke-width="1.6" opacity=".75"><path d="M210 244v112 M154 300h112 M170 260l80 80 M250 260l-80 80"/></g>
+<!-- complete crown -->
+<path d="M146 92 L136 38 L172 59 L210 19 L248 59 L284 38 L274 92 Z" fill="url(#gold)" stroke="#fff1ba" stroke-width="3" stroke-linejoin="round"/>
+<path d="M145 87 Q210 98 275 87 L273 106 Q210 114 147 106Z" fill="#b96a27" stroke="#ffe4a2" stroke-width="3"/>
+<path d="M155 83 L150 52 L175 69 L210 34 L245 69 L270 52 L265 83Z" fill="#361041" stroke="#f8cc73" stroke-width="2"/>
+<g fill="#f5b4ff" stroke="#fff2bf" stroke-width="1.5"><circle cx="210" cy="79" r="8"/><circle cx="174" cy="85" r="5"/><circle cx="246" cy="85" r="5"/></g>
+<g fill="#fff0ae"><circle cx="136" cy="38" r="5"/><circle cx="210" cy="19" r="6"/><circle cx="284" cy="38" r="5"/></g>
+<!-- base and starbursts -->
+<path d="M115 445 Q210 454 305 445" fill="none" stroke="url(#gold)" stroke-width="6" stroke-linecap="round"/>
+<path d="M210 452 V474 M199 463 H221" stroke="#ffdb8b" stroke-width="2" opacity=".75"/>
+<g fill="#fff2bf"><circle cx="55" cy="201" r="2.5"/><circle cx="359" cy="200" r="2.5"/><circle cx="82" cy="395" r="2"/><circle cx="338" cy="401" r="2"/></g>
+<g stroke="#f7bbff" stroke-width="2" stroke-linecap="round"><path d="M54 187v28m-14-14h28 M365 188v25m-12-12h24" opacity=".6"/></g>
+</svg>

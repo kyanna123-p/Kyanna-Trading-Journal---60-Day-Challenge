@@ -35,6 +35,12 @@ const lessons=[
  ['Matching Low','Two bearish candles finish at approximately the same low.','Potential support and bullish reversal.',[[82,42,39,85],[68,42,39,72]]]
 ,
  ['Three Stars in the South','Three progressively smaller bearish candles with contracting ranges.','Potential exhaustion of a decline.',[[90,60,42,93],[73,56,48,77],[64,57,53,67]]]
+,
+ ['Bullish Belt Hold','A strong bullish candle opens near its low and closes much higher.','Potential buying pressure after a decline.',[[25,83,24,85]]]
+,
+ ['Bullish Separating Lines','A bearish candle followed by a bullish candle with approximately the same opening price.','A potential bullish continuation signal.',[[50,28,25,53],[50,82,47,85]]]
+,
+ ['Bullish Stick Sandwich','Two bearish candles with matching closes separated by a bullish candle.','Potential support and bullish reversal.',[[83,43,40,86],[42,69,39,72],[74,43,40,77]]]
  ]},
  {id:'bear',title:'Bearish Reversal Patterns',intro:'Potential downward reversals. Look for rejection and confirmation.',cards:[
  ['Shooting Star','Small body near the low with a long upper wick after an advance.','Potential bearish rejection near resistance.',[[30,45,28,42],[42,60,40,57],[56,73,54,70],[70,86,68,83],[83,85,79,99]]],
@@ -72,12 +78,24 @@ const lessons=[
  ['Advance Block','Three rising bullish candles with weakening bodies or growing upper wicks.','Possible buying exhaustion.',[[20,45,17,49],[44,61,41,70],[60,69,57,82]]]
 ,
  ['Upside Gap Two Crows','A bullish candle is followed by two bearish candles above its body.','Potential bearish reversal after an advance.',[[22,55,19,59],[70,60,57,73],[76,56,53,79]]]
+,
+ ['Bearish Belt Hold','A strong bearish candle opens near its high and closes much lower.','Potential selling pressure after an advance.',[[83,25,23,85]]]
+,
+ ['Bearish Separating Lines','A bullish candle followed by a bearish candle with approximately the same opening price.','A potential bearish continuation signal.',[[50,76,47,79],[50,18,15,53]]]
+,
+ ['Bearish Stick Sandwich','Two bullish candles with matching closes separated by a bearish candle.','Potential resistance and bearish reversal.',[[20,65,17,68],[66,37,34,69],[35,65,32,68]]]
  ]},
  {id:'neutral',title:'Candlesticks',intro:'Learn bullish and bearish candle anatomy. Either color can express indecision when the body is small.',cards:[
  ['Bullish Candle','A green candle closes above its opening price.','The body shows the open-to-close move; the wicks show the high and low.',[[35,70,27,79]]],
  ['Bearish Candle','A red candle closes below its opening price.','The body shows the open-to-close move; the wicks show the high and low.',[[70,35,27,79]]],
  ['Neutral Green Candle','A small green real body with upper and lower wicks.','Buyers and sellers are relatively balanced despite the slightly higher close.',[[49,53,23,78]]],
  ['Neutral Red Candle','A small red real body with upper and lower wicks.','Buyers and sellers are relatively balanced despite the slightly lower close.',[[53,49,23,78]]]
+,
+ ['Doji','The opening and closing prices are equal or nearly equal.','Shows indecision; either candle color is possible.',[[50,50,27,75]]]
+,
+ ['Spinning Top','A small real body with long upper and lower shadows.','Shows indecision; it can be green or red.',[[50,54,27,76]]]
+,
+ ['Marubozu','A long real body with little or no wick.','Shows strong directional movement within the candle.',[[25,80,25,80]]]
  ]},
  {id:'charts',title:'Chart Formations',intro:'Formations describe structure; breakout direction needs confirmation.',cards:[
  ['Symmetrical Triangle','Converging highs and lows create a narrowing range.','Wait for a confirmed break rather than predicting direction.',[[30,45,24,48],[44,29,27,47],[31,43,29,45],[42,34,32,44],[35,40,33,42]]]
@@ -128,6 +146,7 @@ Object.assign(shapes,{
 'Abandoned Baby Top':[[12,47,8,52],[69,69,64,74],[49,16,12,54]]
 });
 Object.assign(shapes,{"Dragonfly Doji":[[60,43,39,63],[43,27,24,46],[27,27,8,28]],"Bullish Spinning Top":[[65,50,47,68],[50,35,32,53],[35,39,21,53]],"Bullish Kicker":[[70,35,31,74],[57,85,54,89]],"Bullish Harami":[[85,30,27,89],[42,51,38,55]],"Bullish Harami Cross":[[85,30,27,89],[52,52,48,56]],"Bullish Engulfing Sandwich":[[78,49,46,81],[49,32,29,52],[28,58,25,61],[58,71,55,74]],"Rising Three":[[30,72,27,76],[67,59,56,70],[59,53,50,62],[53,48,45,56],[49,84,46,88]],"Three Inside Up":[[83,34,31,87],[42,52,39,55],[52,77,49,81]],"Three Outside Up":[[65,47,44,68],[43,73,40,77],[72,86,69,90]],"Matching Low":[[82,42,39,85],[68,42,39,72]],"Three Stars in the South":[[90,60,42,93],[73,56,48,77],[64,57,53,67]],"Gravestone Doji":[[32,49,29,52],[49,67,46,70],[68,68,67,94]],"Bearish Spinning Top":[[28,44,25,47],[44,60,41,63],[62,58,44,76]],"Bearish Kicker":[[25,67,21,71],[44,13,10,47]],"Bearish Harami":[[20,83,17,87],[65,54,51,69]],"Bearish Harami Cross":[[20,83,17,87],[54,54,50,58]],"Bearish Engulfing Sandwich":[[30,52,27,55],[52,70,49,73],[75,43,40,78],[43,30,27,46]],"Falling Three":[[82,37,33,86],[42,49,39,52],[49,55,46,58],[55,60,52,63],[59,22,19,63]],"Three Inside Down":[[20,75,17,79],[62,51,48,65],[51,25,22,54]],"Three Outside Down":[[30,52,27,55],[57,23,20,60],[24,11,8,27]],"Matching High":[[22,70,19,75],[45,70,42,75]],"Advance Block":[[20,45,17,49],[44,61,41,70],[60,69,57,82]],"Upside Gap Two Crows":[[22,55,19,59],[70,60,57,73],[76,56,53,79]]});
+Object.assign(shapes,{"Doji":[[50,50,27,75]],"Spinning Top":[[50,54,27,76]],"Marubozu":[[25,80,25,80]],"Bullish Belt Hold":[[25,83,24,85]],"Bearish Belt Hold":[[83,25,23,85]],"Bullish Separating Lines":[[50,28,25,53],[50,82,47,85]],"Bearish Separating Lines":[[50,76,47,79],[50,18,15,53]],"Bullish Stick Sandwich":[[83,43,40,86],[42,69,39,72],[74,43,40,77]],"Bearish Stick Sandwich":[[20,65,17,68],[66,37,34,69],[35,65,32,68]]});
 function diagram(c,triangle=false,name=''){
  const bars=shapes[name]||c;
  const min=Math.min(...bars.map(v=>v[2])),max=Math.max(...bars.map(v=>v[3]));

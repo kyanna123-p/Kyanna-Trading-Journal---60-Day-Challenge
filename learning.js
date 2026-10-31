@@ -276,18 +276,126 @@ function checklist(c){
  else points.push('Check the preceding trend and wait for confirmation.');
  return '<div style="margin-top:12px;padding:12px 14px;border:1px solid rgba(184,132,255,.34);background:rgba(130,75,180,.10);border-radius:12px"><strong style="color:#dcb7ff">Key takeaways</strong>'+points.map(t=>'<div style="display:flex;gap:10px;margin-top:8px;align-items:flex-start"><span style="color:#36d8a3">✓</span><span>'+t+'</span></div>').join('')+'</div>';
 }
+const confirmations={
+'Hammer':'Next candle holds above the hammer and buyers follow through.',
+'Inverted Hammer':'Subsequent bullish candle supports a reversal.',
+'Hanging Man':'Subsequent selling confirms rejection after an advance.',
+'Shooting Star':'Subsequent bearish follow-through confirms rejection.',
+'Bullish Engulfing':'Price holds the engulfing low and buyers follow through.',
+'Bearish Engulfing':'Price holds below the engulfing high and sellers follow through.',
+'Piercing Line':'Price holds the second candle and buyers follow through.',
+'Dark Cloud Cover':'Price holds below the bearish candle and selling follows through.',
+'Morning Star':'Third candle closes decisively into the first bearish body.',
+'Morning Star Doji':'Third candle closes into the bearish body after a middle doji.',
+'Evening Star':'Third candle closes decisively into the first bullish body.',
+'Evening Star Doji':'Third candle closes into the bullish body after a middle doji.',
+'Abandoned Baby Bottom':'Both full wick gaps isolate the doji, followed by bullish momentum.',
+'Abandoned Baby Top':'Both full wick gaps isolate the doji, followed by bearish momentum.',
+'Three Line Strike (Bullish Reversal)':'The fourth bullish candle reverses the prior three red real bodies.',
+'Three Line Strike (Bearish Reversal)':'The fourth bearish candle reverses the prior three green real bodies.'
+};
+const formationConfirm={
+'Head and Shoulders':'Break below the neckline',
+'Inverted Head and Shoulders':'Break above the neckline',
+'Double Top':'Break below the intervening low',
+'Double Bottom':'Break above the intervening high',
+'Triple Top':'Break below support after the third peak',
+'Triple Bottom':'Break above resistance after the third trough',
+'Bullish Symmetrical Triangle':'Break above descending resistance',
+'Bearish Symmetrical Triangle':'Break below rising support',
+'Ascending Triangle':'Break above horizontal resistance',
+'Descending Triangle':'Break below horizontal support',
+'Wedge Continuation':'Break beyond the wedge in the prevailing trend direction',
+'Wedge Reversal':'Break against the preceding trend',
+'Channels':'Channel boundary rejection or confirmed breakout',
+'Flags':'Break in the flagpole direction',
+'Pennants':'Break in the pole direction',
+'Rectangles':'Break above resistance or below support'
+};
+const formationBias={
+'Head and Shoulders':'Potential bearish reversal','Inverted Head and Shoulders':'Potential bullish reversal',
+'Double Top':'Potential bearish reversal','Double Bottom':'Potential bullish reversal',
+'Triple Top':'Potential bearish reversal','Triple Bottom':'Potential bullish reversal',
+'Bullish Symmetrical Triangle':'Potential bullish reversal or continuation','Bearish Symmetrical Triangle':'Potential bearish reversal or continuation',
+'Ascending Triangle':'Potential bullish continuation','Descending Triangle':'Potential bearish continuation',
+'Wedge Continuation':'Direction depends on prior trend','Wedge Reversal':'Direction depends on prior trend',
+'Channels':'Direction depends on breakout','Flags':'Direction depends on pole','Pennants':'Direction depends on pole','Rectangles':'Direction depends on breakout'
+};
+function classification(card,lesson){
+ if(lesson.id==='charts')return 'Chart formation';
+ if(lesson.id==='neutral')return 'Candlestick anatomy';
+ if(/Rising Three|Falling Three|Separating Lines|Tasuki Gap|Side by Side White Lines/.test(card[0]))return 'Continuation pattern';
+ return lesson.id==='bull'?'Bullish pattern':'Bearish pattern';
+}
+function studyExtras(card,lesson){
+ const name=card[0],chart=lesson.id==='charts',candle=lesson.id==='neutral';
+ const confirmation=chart?formationConfirm[name]:candle?'Compare the open, close, high and low; then interpret the surrounding trend.':(confirmations[name]||'Look for follow-through, an important level, and the preceding trend before acting.');
+ const mistake=chart?'Assuming the pattern has broken out before price crosses its defining trendline, neckline, or range boundary.':candle?'Treating a candle shape or color as a complete trade signal without surrounding context.':/Abandoned Baby/.test(name)?'Confusing an ordinary star with an abandoned baby: the doji must be completely isolated by wick-to-wick gaps.':/Engulfing/.test(name)?'Requiring the wicks to engulf: the real bodies, not necessarily the wicks, must engulf.':'Assuming a recognizable shape guarantees a reversal without the preceding trend or confirmation.';
+ return '<p style="margin:10px 0 4px;color:#dcb7ff;font-weight:600">Confirmation to look for</p><p>'+confirmation+'</p><p style="margin:10px 0 4px;color:#dcb7ff;font-weight:600">Common mistake</p><p>'+mistake+'</p>';
+}
+function candleStrengthNotes(){
+ return '<div style="margin:18px 0;padding:18px;border:1px solid rgba(191,132,255,.40);border-radius:14px;background:rgba(14,8,31,.30)"><h3 style="color:#e6baff">Candlestick Strength Meter — Reading Bodies & Wicks</h3><p>A long body indicates a larger open-to-close move. A small body indicates little net progress. Long upper wicks show rejection from higher prices; long lower wicks show rejection from lower prices. These are descriptions of candle shape, not guarantees of the next move.</p><p class="muted">Compare open, high, low, close and trend context before interpreting strength.</p></div>';
+}
 function wrap(inner){return '<div class="panel" style="margin-top:16px"><h2>Technical Analysis Study Center</h2><p class="muted">Visual reference and pattern recognition, based on your training notes. Patterns are not trade guarantees.</p>'+inner+'</div>'}
 function btn(label,fn){return '<button class="btn secondary" onclick="'+fn+'">'+label+'</button>'}
-function renderCenter(){const el=document.getElementById('technicalStudyCenter');if(!el)return;
- if(section==='home'){el.innerHTML=wrap('<div class="grid">'+lessons.map((l,i)=>'<div class="panel span6"><h3>'+l.title+'</h3><p>'+l.intro+'</p><div class="actions">'+btn('Read Article',"studyOpen("+i+")")+' '+btn('Test Your Knowledge',"studyStart("+i+")")+'</div></div>').join('')+'<div class="panel span6"><h3>Mixed Challenge</h3><p>Identify patterns across all categories.</p>'+btn('Test Your Knowledge',"studyStart(-1)")+'</div></div>');return}
- if(section==='article'){let l=lessons[chosen];el.innerHTML=wrap(btn('← All categories','studyHome()')+'<h3>'+l.title+'</h3><p>'+l.intro+'</p>'+l.cards.map(c=>'<div style="padding:18px;margin:14px 0;border:1px solid rgba(191,132,255,.4);border-radius:16px;background:rgba(14,8,31,.36);backdrop-filter:blur(6px)"><h3 style="color:#e6baff">'+c[0]+'</h3>'+diagram(c[3],c[0].includes('Symmetrical Triangle'),c[0])+'<h4 style="color:#dcb7ff;margin:12px 0 4px">Pattern description</h4><p>'+c[1]+'</p>'+checklist(c)+'</div>').join('')+'<div class="actions">'+btn('Test Your Knowledge',"studyStart("+chosen+")")+'</div>');return}
- if(section==='done'){el.innerHTML=wrap('<h3>Round complete</h3><p style="font-size:24px"><b>'+score+' / '+order.length+'</b> correct</p><div class="actions">'+btn('Try Again',"studyStart("+chosen+")")+' '+btn('Categories','studyHome()')+'</div>');return}
- const c=order[idx].card;const pool=order.map(x=>x.card[0]).filter(n=>n!==c[0]);for(const x of all.map(x=>x.card[0]))if(x!==c[0]&&!pool.includes(x))pool.push(x);const options=[c[0],...pool.slice(idx%Math.max(1,pool.length)).concat(pool.slice(0,idx%Math.max(1,pool.length))).slice(0,3)];const offset=idx%4;const rotated=options.slice(offset).concat(options.slice(0,offset));el.innerHTML=wrap(btn('← Categories','studyHome()')+'<h3>Test Your Knowledge · '+(idx+1)+' / '+order.length+'</h3><p>What pattern is shown?</p><div style="text-align:center;padding:12px;border-radius:12px;background:rgba(130,130,130,.08)">'+diagram(c[3],c[0]==='Symmetrical Triangle',c[0])+'</div><div class="actions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">'+rotated.map(n=>'<button class="btn secondary" '+(answered!==null?'disabled':'')+' onclick="studyAnswer('+JSON.stringify(n).replace(/"/g,'&quot;')+')">'+n+'</button>').join('')+'</div>'+(answered===null?'':'<p><b>'+(answered===c[0]?'Correct':'Not quite — '+c[0])+'</b></p><p>'+c[1]+' '+c[2]+'</p>'+btn(idx===order.length-1?'See score':'Next pattern','studyNext()')))}
+let quizCount=10,questionKind=0,correctAnswer='',questionOptions=[],questionPrompt='';
+function pickChoices(correct,pool,limit=4){
+ const seen=[correct];for(const x of pool){if(typeof x==='string'&&x!==correct&&!seen.includes(x))seen.push(x);if(seen.length>=limit)break;}
+ return seen.sort(()=>Math.random()-.5);
+}
+function shuffle(items){const a=items.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function prepareQuestion(){
+ const item=order[idx],c=item.card,l=item.lesson,name=c[0],chart=l.id==='charts';
+ questionKind=idx%3;
+ const peer=shuffle(l.cards.filter(x=>x[0]!==name));
+ if(questionKind===0){
+  questionPrompt=chart?'Which chart formation is shown?':'Which candlestick or pattern is shown?';
+  correctAnswer=name;
+  questionOptions=pickChoices(name,peer.map(x=>x[0]));
+ }else if(chart&&questionKind===1){
+  questionPrompt='What is the usual directional interpretation of this formation?';
+  correctAnswer=formationBias[name];
+  questionOptions=pickChoices(correctAnswer,shuffle(Object.values(formationBias)));
+ }else if(chart){
+  questionPrompt='What confirms this chart formation?';
+  correctAnswer=formationConfirm[name];
+  questionOptions=pickChoices(correctAnswer,peer.map(x=>formationConfirm[x[0]]).filter(Boolean));
+ }else{
+  questionPrompt=questionKind===1?'Which description matches the illustrated pattern?':'Which interpretation best matches the illustrated pattern?';
+  const col=questionKind===1?1:2;
+  correctAnswer=c[col];
+  questionOptions=pickChoices(correctAnswer,peer.map(x=>x[col]));
+ }
+}
+function renderCenter(){
+ const el=document.getElementById('technicalStudyCenter');if(!el)return;
+ if(section==='home'){
+  el.innerHTML=wrap('<div class="grid">'+lessons.map((l,i)=>'<div class="panel span6" style="background:rgba(14,8,31,.28);backdrop-filter:blur(6px)"><h3>'+l.title+'</h3><p>'+l.intro+'</p><p class="muted">'+l.cards.length+' illustrated references</p><div class="actions">'+btn('Read Article',"studyOpen("+i+")")+' '+btn('Test 10',"studyStart("+i+",10)")+' '+btn('Test All',"studyStart("+i+",0)")+'</div></div>').join('')+'<div class="panel span6"><h3>Mixed Challenge</h3><p>Test patterns across every category. Choose a short round or study them all at your own pace.</p><div class="actions">'+btn('Test 10',"studyStart(-1,10)")+' '+btn('Test All',"studyStart(-1,0)")+'</div></div></div>');return;
+ }
+ if(section==='article'){
+  const l=lessons[chosen];
+  el.innerHTML=wrap(btn('← All categories','studyHome()')+'<h3>'+l.title+'</h3><p>'+l.intro+'</p>'+(l.id==='neutral'?candleStrengthNotes():'')+l.cards.map(c=>'<div style="padding:18px;margin:14px 0;border:1px solid rgba(191,132,255,.4);border-radius:16px;background:rgba(14,8,31,.36);backdrop-filter:blur(6px)"><h3 style="color:#e6baff">'+c[0]+'</h3><p class="muted" style="margin:0 0 12px">'+classification(c,l)+'</p>'+diagram(c[3],false,c[0])+'<h4 style="color:#dcb7ff;margin:12px 0 4px">Pattern description</h4><p>'+c[1]+'</p>'+checklist(c)+studyExtras(c,l)+'</div>').join('')+'<div class="actions">'+btn('Test 10',"studyStart("+chosen+",10)")+' '+btn('Test All',"studyStart("+chosen+",0)")+'</div>');return;
+ }
+ if(section==='done'){
+  el.innerHTML=wrap('<h3>Round complete</h3><p style="font-size:24px"><b>'+score+' / '+order.length+'</b> correct</p><div class="actions">'+btn('Try Again',"studyStart("+chosen+","+quizCount+")")+' '+btn('Categories','studyHome()')+'</div>');return;
+ }
+ const item=order[idx],c=item.card;
+ const question='<h3>Test Your Knowledge · '+(idx+1)+' / '+order.length+'</h3><p>'+questionPrompt+'</p>';
+ const opts='<div class="actions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">'+questionOptions.map(n=>'<button class="btn secondary" style="white-space:normal;text-align:left;min-height:46px" '+(answered!==null?'disabled':'')+' onclick="studyAnswer('+JSON.stringify(n).replace(/"/g,'&quot;')+')">'+n+'</button>').join('')+'</div>';
+ const feedback=answered===null?'':'<p><b>'+(answered===correctAnswer?'Correct':'Not quite — '+correctAnswer)+'</b></p><p>'+c[1]+' '+c[2]+'</p>'+btn(idx===order.length-1?'See score':'Next pattern','studyNext()');
+ el.innerHTML=wrap(btn('← Categories','studyHome()')+question+'<div style="padding:12px;border-radius:12px;background:rgba(130,130,130,.08)">'+diagram(c[3],false,c[0],true)+'</div>'+opts+feedback);
+}
 window.studyHome=()=>{section='home';renderCenter()};
 window.studyOpen=i=>{chosen=i;section='article';renderCenter()};
-window.studyStart=i=>{chosen=i;order=(i<0?all:lessons[i].cards.map(c=>({lesson:lessons[i],card:c}))).slice();idx=0;score=0;answered=null;section='quiz';renderCenter()};
-window.studyAnswer=n=>{if(answered!==null)return;answered=n;if(n===order[idx].card[0])score++;renderCenter()};
-window.studyNext=()=>{idx++;answered=null;if(idx>=order.length)section='done';renderCenter()};
+window.studyStart=(i,count=10)=>{
+ chosen=i;quizCount=count;
+ const group=i<0?all.filter((x,index)=>all.findIndex(y=>y.card[0]===x.card[0])===index):lessons[i].cards.map(c=>({lesson:lessons[i],card:c}));
+ const shuffled=shuffle(group);
+ order=count>0?shuffled.slice(0,count):shuffled;
+ idx=0;score=0;answered=null;section='quiz';prepareQuestion();renderCenter();
+};
+window.studyAnswer=n=>{if(answered!==null)return;answered=n;if(n===correctAnswer)score++;renderCenter()};
+window.studyNext=()=>{idx++;answered=null;if(idx>=order.length)section='done';else prepareQuestion();renderCenter()};
 const previous=renderResources;
 renderResources=function(){previous();const el=document.getElementById('resources');el.insertAdjacentHTML('beforeend','<div id="technicalStudyCenter"></div>');renderCenter()};
 renderResources();

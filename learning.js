@@ -6,6 +6,13 @@ const lessons=[
  ['Bullish Engulfing','A bullish real body engulfs the prior bearish real body.','Potential shift toward buying pressure after a decline.',[[68,72,52,56],[56,60,39,43],[44,49,27,30],[32,34,17,19],[15,41,12,44]]],
  ['Morning Star','Three-candle formation: bearish candle, small-bodied candle, then bullish candle.','Potential bullish reversal; third candle supplies confirmation.',[[66,69,49,53],[52,55,34,38],[39,42,17,20],[20,25,14,22],[18,40,16,43]]],
  ['Three White Soldiers','Three consecutive strong bullish candles.','Suggests sustained buying pressure; consider whether price is extended.',[[40,43,26,28],[30,46,27,43],[42,60,39,57],[55,76,53,73],[72,90,70,87]]]
+,
+ ['Inverted Hammer','Small body near the low with a long upper wick after a decline.','Potential bullish reversal; wait for a confirming bullish candle.',[[88,72,69,91],[73,57,54,77],[58,42,39,62],[43,28,25,47],[28,32,25,60],[32,49,29,52]]],
+ ['Piercing Line','A bullish candle opens below the prior bearish close and closes above its body midpoint.','Potential bullish reversal after selling pressure.',[[85,70,67,88],[70,55,52,73],[55,33,30,58],[28,48,24,52],[48,60,45,63]]],
+ ['Abandoned Baby Bottom','A doji gaps below a bearish candle, followed by a bullish gap and recovery.','Rare three-candle bullish reversal; gaps are important.',[[86,70,67,90],[70,45,41,73],[33,33,29,37],[45,68,42,71]]],
+ ['Morning Star Doji','A morning star whose middle candle is a doji.','Indecision followed by bullish confirmation.',[[84,69,66,87],[69,42,39,72],[34,34,29,38],[40,65,37,68]]],
+ ['Tweezer Bottoms','Two candles test approximately the same low.','Potential support and bullish reversal with confirmation.',[[81,66,62,84],[66,49,45,69],[49,34,27,52],[33,47,27,51],[47,63,44,66]]],
+ ['Three Line Strike (Bullish Reversal)','A four-candle formation featuring three bearish candles and a large bullish fourth candle.','The final bullish candle can signal a shift; assess context.',[[87,76,73,90],[76,62,59,79],[62,49,46,65],[49,36,33,52],[34,82,31,85]]]
  ]},
  {id:'bear',title:'Bearish Reversal Patterns',intro:'Potential downward reversals. Look for rejection and confirmation.',cards:[
  ['Shooting Star','Small body near the low with a long upper wick after an advance.','Potential bearish rejection near resistance.',[[30,45,28,42],[42,60,40,57],[56,73,54,70],[70,86,68,83],[83,85,79,99]]],
@@ -13,6 +20,12 @@ const lessons=[
  ['Bearish Engulfing','A bearish real body engulfs the prior bullish real body.','Potential shift toward selling pressure after a rise.',[[28,43,26,40],[40,58,38,55],[54,72,52,69],[68,81,66,78],[84,57,53,87]]],
  ['Evening Star','Three-candle formation: bullish candle, small-bodied candle, then bearish candle.','Potential bearish reversal after an upward move.',[[29,45,27,42],[42,60,40,57],[57,77,55,74],[76,79,73,75],[75,53,50,78]]],
  ['Three Black Crows','Three consecutive substantial bearish candles.','Suggests sustained selling pressure.',[[85,71,69,87],[72,58,56,74],[60,45,43,62],[46,32,30,48],[33,20,18,35]]]
+,
+ ['Evening Star Doji','An evening star whose middle candle is a doji.','Indecision followed by bearish confirmation.',[[17,33,14,36],[33,57,30,60],[65,65,61,69],[57,30,27,60]]],
+ ['Abandoned Baby Top','A doji gaps above a bullish candle, followed by a bearish gap and decline.','Rare three-candle bearish reversal; gaps are important.',[[17,34,14,37],[34,60,31,63],[73,73,69,77],[60,32,29,63]]],
+ ['Dark Cloud Cover','A bearish candle opens above the prior bullish close and closes below its body midpoint.','Potential bearish reversal after an advance.',[[16,32,13,35],[32,50,29,53],[50,76,47,79],[81,58,55,84],[58,44,41,61]]],
+ ['Tweezer Tops','Two candles test approximately the same high.','Potential resistance and bearish reversal with confirmation.',[[18,33,15,36],[33,52,30,55],[52,70,49,77],[70,57,54,77],[57,39,36,60]]],
+ ['Three Line Strike (Bearish Reversal)','A four-candle formation featuring three bullish candles and a large bearish fourth candle.','The final bearish candle can signal a shift; assess context.',[[15,28,12,31],[28,43,25,46],[43,58,40,61],[58,74,55,77],[76,20,17,79]]]
  ]},
  {id:'neutral',title:'Candlesticks',intro:'Learn bullish and bearish candle anatomy. Either color can express indecision when the body is small.',cards:[
  ['Bullish Candle','A green candle closes above its opening price.','The body shows the open-to-close move; the wicks show the high and low.',[[35,70,27,79]]],
@@ -51,6 +64,19 @@ const shapes={
 'Breakout and Retest':[[23,37,20,40],[37,52,34,55],[52,69,49,72],[69,83,66,86],[83,72,68,87],[72,91,69,94]],
 'Symmetrical Triangle':[[30,65,24,70],[65,38,33,69],[38,59,35,63],[59,43,39,62],[43,54,41,57],[54,48,45,56]]
 };
+Object.assign(shapes,{
+"Inverted Hammer":[[88,72,69,91],[73,57,54,77],[58,42,39,62],[43,28,25,47],[28,32,25,60],[32,49,29,52]],
+"Piercing Line":[[85,70,67,88],[70,55,52,73],[55,33,30,58],[28,48,24,52],[48,60,45,63]],
+"Abandoned Baby Bottom":[[86,70,67,90],[70,45,41,73],[33,33,29,37],[45,68,42,71]],
+"Morning Star Doji":[[84,69,66,87],[69,42,39,72],[34,34,29,38],[40,65,37,68]],
+"Tweezer Bottoms":[[81,66,62,84],[66,49,45,69],[49,34,27,52],[33,47,27,51],[47,63,44,66]],
+"Three Line Strike (Bullish Reversal)":[[87,76,73,90],[76,62,59,79],[62,49,46,65],[49,36,33,52],[34,82,31,85]],
+"Evening Star Doji":[[17,33,14,36],[33,57,30,60],[65,65,61,69],[57,30,27,60]],
+"Abandoned Baby Top":[[17,34,14,37],[34,60,31,63],[73,73,69,77],[60,32,29,63]],
+"Dark Cloud Cover":[[16,32,13,35],[32,50,29,53],[50,76,47,79],[81,58,55,84],[58,44,41,61]],
+"Tweezer Tops":[[18,33,15,36],[33,52,30,55],[52,70,49,77],[70,57,54,77],[57,39,36,60]],
+"Three Line Strike (Bearish Reversal)":[[15,28,12,31],[28,43,25,46],[43,58,40,61],[58,74,55,77],[76,20,17,79]]
+});
 function diagram(c,triangle=false,name=''){
  const bars=shapes[name]||c;
  const min=Math.min(...bars.map(v=>v[2])),max=Math.max(...bars.map(v=>v[3]));

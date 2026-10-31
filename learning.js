@@ -234,6 +234,8 @@ Object.assign(shapes,{
 'Harami (Overview)':[[20,84,17,88],[65,54,51,69]],
 'Long-Legged Doji':[[51,52,17,87],[52,51,17,87]]
 });
+/* Audit correction: reversal examples retain trend context; Candlesticks uses raw OHLC. */
+Object.assign(shapes,{"Hammer":[[88,73,69,91],[74,59,55,77],[60,45,41,63],[46,31,27,49],[31,36,8,39],[36,52,32,55],[52,68,48,71]],"Inverted Hammer":[[88,72,69,91],[73,57,54,77],[58,42,39,62],[43,28,25,47],[28,32,25,60],[32,49,29,52]],"Shooting Star":[[17,33,14,36],[33,49,30,52],[49,65,46,68],[65,80,62,83],[81,77,74,99],[77,62,59,80],[62,49,46,65]],"Hanging Man":[[17,33,14,36],[33,49,30,52],[49,65,46,68],[65,80,62,83],[80,77,50,83],[77,62,59,80]],"Dragonfly Doji":[[60,43,39,63],[43,27,24,46],[27,27,8,28]],"Gravestone Doji":[[32,49,29,52],[49,67,46,70],[68,68,67,94]]});
 function diagram(c,triangle=false,name='',hideName=false,anatomy=false){
  if(formationArt[name])return formationDiagram(name,hideName);
  const bars=anatomy?c:(shapes[name]||c);

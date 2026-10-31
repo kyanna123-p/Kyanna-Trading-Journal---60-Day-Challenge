@@ -41,6 +41,16 @@ const lessons=[
  ['Bullish Separating Lines','A bearish candle followed by a bullish candle with approximately the same opening price.','A potential bullish continuation signal.',[[50,28,25,53],[50,82,47,85]]]
 ,
  ['Bullish Stick Sandwich','Two bearish candles with matching closes separated by a bullish candle.','Potential support and bullish reversal.',[[83,43,40,86],[42,69,39,72],[74,43,40,77]]]
+,
+ ["Bullish Tri Star","Three doji candles after a decline, with the middle doji gapping below its neighbors.","Potential exhaustion of selling; dojis require a confirmed move.",[[61,61,56,67],[38,38,33,43],[56,56,49,62]]]
+,
+ ["Bullish Meeting Line","After a bearish candle, a bullish candle opens lower and closes near the prior bearish close.","A meeting close may suggest selling exhaustion.",[[85,45,42,89],[26,45,23,49]]]
+,
+ ["Bullish Breakaway","A five-candle sequence begins with selling, gaps lower, and ends with a strong bullish recovery.","Potential bullish reversal; final candle penetrates the prior down move.",[[90,60,56,94],[49,39,35,53],[39,31,28,43],[31,29,25,36],[28,71,24,74]]]
+,
+ ["Bullish Side by Side White Lines","Two similar bullish candles appear beside one another following a gap higher.","Typically a bullish continuation formation rather than a reversal.",[[24,55,21,58],[68,87,65,91],[69,88,66,92]]]
+,
+ ["Upside Tasuki Gap","Two bullish candles form an upside gap, then a bearish candle pulls back into the gap without closing it.","A potential bullish continuation gap pattern.",[[20,46,17,50],[59,83,56,87],[80,54,52,84]]]
  ]},
  {id:'bear',title:'Bearish Reversal Patterns',intro:'Potential downward reversals. Look for rejection and confirmation.',cards:[
  ['Shooting Star','Small body near the low with a long upper wick after an advance.','Potential bearish rejection near resistance.',[[30,45,28,42],[42,60,40,57],[56,73,54,70],[70,86,68,83],[83,85,79,99]]],
@@ -84,6 +94,18 @@ const lessons=[
  ['Bearish Separating Lines','A bullish candle followed by a bearish candle with approximately the same opening price.','A potential bearish continuation signal.',[[50,76,47,79],[50,18,15,53]]]
 ,
  ['Bearish Stick Sandwich','Two bullish candles with matching closes separated by a bearish candle.','Potential resistance and bearish reversal.',[[20,65,17,68],[66,37,34,69],[35,65,32,68]]]
+,
+ ["Bearish Tri Star","Three doji candles after an advance, with the middle doji gapping above its neighbors.","Potential buying exhaustion; bearish confirmation is needed.",[[39,39,33,44],[65,65,59,70],[43,43,37,48]]]
+,
+ ["Bearish Meeting Line","After a bullish candle, a bearish candle opens higher and closes near the prior bullish close.","A meeting close can suggest buying exhaustion.",[[22,64,18,68],[87,64,60,90]]]
+,
+ ["Bearish Breakaway","A five-candle sequence starts with buying, gaps higher, and ends in a sharp bearish move.","Potential bearish reversal after an upward sequence.",[[15,45,11,49],[56,68,52,72],[68,76,64,80],[76,79,72,83],[80,28,25,84]]]
+,
+ ["Bearish Side by Side White Lines","Two similar bullish candles appear beside one another after a downward gap.","Often classified as bearish continuation despite green candles.",[[82,48,44,86],[36,55,32,59],[35,54,31,58]]]
+,
+ ["Downside Tasuki Gap","Two bearish candles form a downside gap, then a bullish candle partially retraces it without closing the gap.","A potential bearish continuation gap pattern.",[[82,53,49,86],[40,19,15,44],[22,48,19,51]]]
+,
+ ["Downside Gap Two Crows","A rare two-crow gap formation labeled on the reference cheat sheet.","Treat as a specialized pattern; verify trend and follow-through rather than relying on the name alone.",[[82,50,46,86],[38,24,20,42],[32,14,10,36]]]
  ]},
  {id:'neutral',title:'Candlesticks',intro:'Learn bullish and bearish candle anatomy. Either color can express indecision when the body is small.',cards:[
  ['Bullish Candle','A green candle closes above its opening price.','The body shows the open-to-close move; the wicks show the high and low.',[[35,70,27,79]]],
@@ -173,6 +195,7 @@ Object.assign(shapes,{
 Object.assign(shapes,{"Dragonfly Doji":[[60,43,39,63],[43,27,24,46],[27,27,8,28]],"Bullish Spinning Top":[[65,50,47,68],[50,35,32,53],[35,39,21,53]],"Bullish Kicker":[[70,35,31,74],[57,85,54,89]],"Bullish Harami":[[85,30,27,89],[42,51,38,55]],"Bullish Harami Cross":[[85,30,27,89],[52,52,48,56]],"Bullish Engulfing Sandwich":[[78,49,46,81],[49,32,29,52],[28,58,25,61],[58,71,55,74]],"Rising Three":[[30,72,27,76],[67,59,56,70],[59,53,50,62],[53,48,45,56],[49,84,46,88]],"Three Inside Up":[[83,34,31,87],[42,52,39,55],[52,77,49,81]],"Three Outside Up":[[65,47,44,68],[43,73,40,77],[72,86,69,90]],"Matching Low":[[82,42,39,85],[68,42,39,72]],"Three Stars in the South":[[90,60,42,93],[73,56,48,77],[64,57,53,67]],"Gravestone Doji":[[32,49,29,52],[49,67,46,70],[68,68,67,94]],"Bearish Spinning Top":[[28,44,25,47],[44,60,41,63],[62,58,44,76]],"Bearish Kicker":[[25,67,21,71],[44,13,10,47]],"Bearish Harami":[[20,83,17,87],[65,54,51,69]],"Bearish Harami Cross":[[20,83,17,87],[54,54,50,58]],"Bearish Engulfing Sandwich":[[30,52,27,55],[52,70,49,73],[75,43,40,78],[43,30,27,46]],"Falling Three":[[82,37,33,86],[42,49,39,52],[49,55,46,58],[55,60,52,63],[59,22,19,63]],"Three Inside Down":[[20,75,17,79],[62,51,48,65],[51,25,22,54]],"Three Outside Down":[[30,52,27,55],[57,23,20,60],[24,11,8,27]],"Matching High":[[22,70,19,75],[45,70,42,75]],"Advance Block":[[20,45,17,49],[44,61,41,70],[60,69,57,82]],"Upside Gap Two Crows":[[22,55,19,59],[70,60,57,73],[76,56,53,79]]});
 Object.assign(shapes,{"Doji":[[50,50,27,75]],"Spinning Top":[[50,54,27,76]],"Marubozu":[[25,80,25,80]],"Bullish Belt Hold":[[25,83,24,85]],"Bearish Belt Hold":[[83,25,23,85]],"Bullish Separating Lines":[[50,28,25,53],[50,82,47,85]],"Bearish Separating Lines":[[50,76,47,79],[50,18,15,53]],"Bullish Stick Sandwich":[[83,43,40,86],[42,69,39,72],[74,43,40,77]],"Bearish Stick Sandwich":[[20,65,17,68],[66,37,34,69],[35,65,32,68]]});
 Object.assign(shapes,{"Long Green Candle":[[24,86,20,90]],"Long Red Candle":[[86,24,20,90]],"Short Green Candle":[[45,56,40,61]],"Short Red Candle":[[56,45,40,61]],"Green Marubozu":[[20,85,20,85]],"Red Marubozu":[[85,20,20,85]],"Bullish Closing Marubozu":[[30,83,23,83]],"Bearish Closing Marubozu":[[78,25,25,87]],"Bullish Opening Marubozu":[[25,79,25,87]],"Bearish Opening Marubozu":[[82,29,22,82]],"Green Spinning Top":[[49,55,24,80]],"Red Spinning Top":[[55,49,24,80]],"Long-Legged Doji":[[52,52,17,87]],"Bullish Doji":[[50,51,33,69]],"Bearish Doji":[[51,50,33,69]],"Cross Doji":[[64,64,20,69]],"Inverted Cross Doji":[[36,36,31,82]],"Dragonfly Doji":[[78,78,23,79]],"Gravestone Doji":[[23,23,22,79]],"Hammer":[[72,78,30,81]],"Hanging Man":[[72,78,30,81]],"Inverted Hammer":[[23,29,20,83]],"Shooting Star":[[29,23,20,83]]});
+Object.assign(shapes,{"Bullish Tri Star":[[61,61,56,67],[38,38,33,43],[56,56,49,62]],"Bullish Meeting Line":[[85,45,42,89],[26,45,23,49]],"Bullish Breakaway":[[90,60,56,94],[49,39,35,53],[39,31,28,43],[31,29,25,36],[28,71,24,74]],"Bullish Side by Side White Lines":[[24,55,21,58],[68,87,65,91],[69,88,66,92]],"Upside Tasuki Gap":[[20,46,17,50],[59,83,56,87],[80,54,52,84]],"Bearish Tri Star":[[39,39,33,44],[65,65,59,70],[43,43,37,48]],"Bearish Meeting Line":[[22,64,18,68],[87,64,60,90]],"Bearish Breakaway":[[15,45,11,49],[56,68,52,72],[68,76,64,80],[76,79,72,83],[80,28,25,84]],"Bearish Side by Side White Lines":[[82,48,44,86],[36,55,32,59],[35,54,31,58]],"Downside Tasuki Gap":[[82,53,49,86],[40,19,15,44],[22,48,19,51]],"Downside Gap Two Crows":[[82,50,46,86],[38,24,20,42],[32,14,10,36]]});
 function diagram(c,triangle=false,name=''){
  const bars=shapes[name]||c;
  const min=Math.min(...bars.map(v=>v[2])),max=Math.max(...bars.map(v=>v[3]));

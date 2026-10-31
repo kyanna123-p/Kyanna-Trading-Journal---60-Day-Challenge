@@ -95,7 +95,30 @@ const lessons=[
 ,
  ['Spinning Top','A small real body with long upper and lower shadows.','Shows indecision; it can be green or red.',[[50,54,27,76]]]
 ,
- ['Marubozu','A long real body with little or no wick.','Shows strong directional movement within the candle.',[[25,80,25,80]]]
+ ['Marubozu','A long real body with little or no wick.','Shows strong directional movement within the candle.',[[25,80,25,80]]],
+ ["Long Green Candle","A long green real body: the close is far above the open.","Bullish pressure over the candle period.",[[24,86,20,90]]],
+ ["Long Red Candle","A long red real body: the close is far below the open.","Bearish pressure over the candle period.",[[86,24,20,90]]],
+ ["Short Green Candle","A short green real body with relatively small open-to-close movement.","A small net gain; context and wicks matter.",[[45,56,40,61]]],
+ ["Short Red Candle","A short red real body with relatively small open-to-close movement.","A small net loss; context and wicks matter.",[[56,45,40,61]]],
+ ["Green Marubozu","A large green real body with essentially no shadows.","Strong buying pressure during the period.",[[20,85,20,85]]],
+ ["Red Marubozu","A large red real body with essentially no shadows.","Strong selling pressure during the period.",[[85,20,20,85]]],
+ ["Bullish Closing Marubozu","A bullish real body closing at its high, usually with a lower shadow.","Strong finish by buyers; no upper shadow.",[[30,83,23,83]]],
+ ["Bearish Closing Marubozu","A bearish real body closing at its low, usually with an upper shadow.","Strong finish by sellers; no lower shadow.",[[78,25,25,87]]],
+ ["Bullish Opening Marubozu","A bullish real body opening at its low, usually with an upper shadow.","Buyers controlled price immediately after the open.",[[25,79,25,87]]],
+ ["Bearish Opening Marubozu","A bearish real body opening at its high, usually with a lower shadow.","Sellers controlled price immediately after the open.",[[82,29,22,82]]],
+ ["Green Spinning Top","A small green real body with noticeable upper and lower shadows.","Indecision; direction depends on surrounding price action.",[[49,55,24,80]]],
+ ["Red Spinning Top","A small red real body with noticeable upper and lower shadows.","Indecision; direction depends on surrounding price action.",[[55,49,24,80]]],
+ ["Long-Legged Doji","Open and close are nearly equal with long shadows on both sides.","Strong two-sided volatility with little net progress.",[[52,52,17,87]]],
+ ["Bullish Doji","A doji that closes slightly above its open.","Indecision despite a marginal bullish finish.",[[50,51,33,69]]],
+ ["Bearish Doji","A doji that closes slightly below its open.","Indecision despite a marginal bearish finish.",[[51,50,33,69]]],
+ ["Cross Doji","A very small body with a longer lower shadow and a short upper shadow.","A cross-like indecision candle; compare with the dragonfly doji.",[[64,64,20,69]]],
+ ["Inverted Cross Doji","A very small body with a long upper shadow and a short lower shadow.","An inverted cross-like indecision candle.",[[36,36,31,82]]],
+ ["Dragonfly Doji","Open and close near the high, with a long lower shadow and virtually no upper shadow.","Potential rejection of lower prices; reversal requires context.",[[78,78,23,79]]],
+ ["Gravestone Doji","Open and close near the low, with a long upper shadow and virtually no lower shadow.","Potential rejection of higher prices; reversal requires context.",[[23,23,22,79]]],
+ ["Hammer","A small real body near the high with a lower shadow at least twice the body.","Bullish reversal candidate after a decline; seek confirmation.",[[72,78,30,81]]],
+ ["Hanging Man","The same long-lower-wick shape as a hammer, occurring after an advance.","Bearish warning after an uptrend; confirmation required.",[[72,78,30,81]]],
+ ["Inverted Hammer","A small real body near the low with an upper shadow at least twice the body.","Bullish reversal candidate after a decline; confirmation required.",[[23,29,20,83]]],
+ ["Shooting Star","The same long-upper-wick shape as an inverted hammer, after an advance.","Bearish reversal warning near highs; confirmation required.",[[29,23,20,83]]]
  ]},
  {id:'charts',title:'Chart Formations',intro:'Formations describe structure; breakout direction needs confirmation.',cards:[
  ['Bullish Symmetrical Triangle','Converging highs and lows followed by a confirmed breakout above descending resistance.','Watch for an upside break and confirmation; not every triangle breaks upward.',[[35,65,30,69],[65,43,39,68],[43,60,40,63],[60,51,48,62],[51,58,49,60],[58,84,55,88]]],
@@ -149,6 +172,7 @@ Object.assign(shapes,{
 });
 Object.assign(shapes,{"Dragonfly Doji":[[60,43,39,63],[43,27,24,46],[27,27,8,28]],"Bullish Spinning Top":[[65,50,47,68],[50,35,32,53],[35,39,21,53]],"Bullish Kicker":[[70,35,31,74],[57,85,54,89]],"Bullish Harami":[[85,30,27,89],[42,51,38,55]],"Bullish Harami Cross":[[85,30,27,89],[52,52,48,56]],"Bullish Engulfing Sandwich":[[78,49,46,81],[49,32,29,52],[28,58,25,61],[58,71,55,74]],"Rising Three":[[30,72,27,76],[67,59,56,70],[59,53,50,62],[53,48,45,56],[49,84,46,88]],"Three Inside Up":[[83,34,31,87],[42,52,39,55],[52,77,49,81]],"Three Outside Up":[[65,47,44,68],[43,73,40,77],[72,86,69,90]],"Matching Low":[[82,42,39,85],[68,42,39,72]],"Three Stars in the South":[[90,60,42,93],[73,56,48,77],[64,57,53,67]],"Gravestone Doji":[[32,49,29,52],[49,67,46,70],[68,68,67,94]],"Bearish Spinning Top":[[28,44,25,47],[44,60,41,63],[62,58,44,76]],"Bearish Kicker":[[25,67,21,71],[44,13,10,47]],"Bearish Harami":[[20,83,17,87],[65,54,51,69]],"Bearish Harami Cross":[[20,83,17,87],[54,54,50,58]],"Bearish Engulfing Sandwich":[[30,52,27,55],[52,70,49,73],[75,43,40,78],[43,30,27,46]],"Falling Three":[[82,37,33,86],[42,49,39,52],[49,55,46,58],[55,60,52,63],[59,22,19,63]],"Three Inside Down":[[20,75,17,79],[62,51,48,65],[51,25,22,54]],"Three Outside Down":[[30,52,27,55],[57,23,20,60],[24,11,8,27]],"Matching High":[[22,70,19,75],[45,70,42,75]],"Advance Block":[[20,45,17,49],[44,61,41,70],[60,69,57,82]],"Upside Gap Two Crows":[[22,55,19,59],[70,60,57,73],[76,56,53,79]]});
 Object.assign(shapes,{"Doji":[[50,50,27,75]],"Spinning Top":[[50,54,27,76]],"Marubozu":[[25,80,25,80]],"Bullish Belt Hold":[[25,83,24,85]],"Bearish Belt Hold":[[83,25,23,85]],"Bullish Separating Lines":[[50,28,25,53],[50,82,47,85]],"Bearish Separating Lines":[[50,76,47,79],[50,18,15,53]],"Bullish Stick Sandwich":[[83,43,40,86],[42,69,39,72],[74,43,40,77]],"Bearish Stick Sandwich":[[20,65,17,68],[66,37,34,69],[35,65,32,68]]});
+Object.assign(shapes,{"Long Green Candle":[[24,86,20,90]],"Long Red Candle":[[86,24,20,90]],"Short Green Candle":[[45,56,40,61]],"Short Red Candle":[[56,45,40,61]],"Green Marubozu":[[20,85,20,85]],"Red Marubozu":[[85,20,20,85]],"Bullish Closing Marubozu":[[30,83,23,83]],"Bearish Closing Marubozu":[[78,25,25,87]],"Bullish Opening Marubozu":[[25,79,25,87]],"Bearish Opening Marubozu":[[82,29,22,82]],"Green Spinning Top":[[49,55,24,80]],"Red Spinning Top":[[55,49,24,80]],"Long-Legged Doji":[[52,52,17,87]],"Bullish Doji":[[50,51,33,69]],"Bearish Doji":[[51,50,33,69]],"Cross Doji":[[64,64,20,69]],"Inverted Cross Doji":[[36,36,31,82]],"Dragonfly Doji":[[78,78,23,79]],"Gravestone Doji":[[23,23,22,79]],"Hammer":[[72,78,30,81]],"Hanging Man":[[72,78,30,81]],"Inverted Hammer":[[23,29,20,83]],"Shooting Star":[[29,23,20,83]]});
 function diagram(c,triangle=false,name=''){
  const bars=shapes[name]||c;
  const min=Math.min(...bars.map(v=>v[2])),max=Math.max(...bars.map(v=>v[3]));

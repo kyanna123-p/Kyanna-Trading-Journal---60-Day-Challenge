@@ -98,7 +98,8 @@ const lessons=[
  ['Marubozu','A long real body with little or no wick.','Shows strong directional movement within the candle.',[[25,80,25,80]]]
  ]},
  {id:'charts',title:'Chart Formations',intro:'Formations describe structure; breakout direction needs confirmation.',cards:[
- ['Symmetrical Triangle','Converging highs and lows create a narrowing range.','Wait for a confirmed break rather than predicting direction.',[[30,45,24,48],[44,29,27,47],[31,43,29,45],[42,34,32,44],[35,40,33,42]]]
+ ['Bullish Symmetrical Triangle','Converging highs and lows followed by a confirmed breakout above descending resistance.','Watch for an upside break and confirmation; not every triangle breaks upward.',[[35,65,30,69],[65,43,39,68],[43,60,40,63],[60,51,48,62],[51,58,49,60],[58,84,55,88]]],
+ ['Bearish Symmetrical Triangle','Converging highs and lows followed by a confirmed breakdown below rising support.','Watch for a downside break and confirmation; not every triangle breaks downward.',[[65,35,31,69],[35,57,32,60],[57,40,37,60],[40,49,38,52],[49,43,40,51],[43,18,15,46]]]
  ]}
 ];
 const all=lessons.flatMap(x=>x.cards.map(c=>({lesson:x,card:c})));
@@ -121,7 +122,8 @@ const shapes={
 'Support Rejection':[[79,66,62,83],[66,50,46,70],[50,32,28,54],[32,40,20,44],[40,57,36,60],[57,72,54,76]],
 'Resistance Rejection':[[22,39,19,42],[39,56,36,59],[56,74,53,77],[74,69,67,85],[69,51,48,72],[51,37,34,54]],
 'Breakout and Retest':[[23,37,20,40],[37,52,34,55],[52,69,49,72],[69,83,66,86],[83,72,68,87],[72,91,69,94]],
-'Symmetrical Triangle':[[30,65,24,70],[65,38,33,69],[38,59,35,63],[59,43,39,62],[43,54,41,57],[54,48,45,56]]
+'Bullish Symmetrical Triangle':[[35,65,30,69],[65,43,39,68],[43,60,40,63],[60,51,48,62],[51,58,49,60],[58,84,55,88]],
+'Bearish Symmetrical Triangle':[[65,35,31,69],[35,57,32,60],[57,40,37,60],[40,49,38,52],[49,43,40,51],[43,18,15,46]]
 };
 Object.assign(shapes,{
 "Inverted Hammer":[[88,72,69,91],[73,57,54,77],[58,42,39,62],[43,28,25,47],[28,32,25,60],[32,49,29,52]],
@@ -174,7 +176,7 @@ function wrap(inner){return '<div class="panel" style="margin-top:16px"><h2>Tech
 function btn(label,fn){return '<button class="btn secondary" onclick="'+fn+'">'+label+'</button>'}
 function renderCenter(){const el=document.getElementById('technicalStudyCenter');if(!el)return;
  if(section==='home'){el.innerHTML=wrap('<div class="grid">'+lessons.map((l,i)=>'<div class="panel span6"><h3>'+l.title+'</h3><p>'+l.intro+'</p><div class="actions">'+btn('Read Article',"studyOpen("+i+")")+' '+btn('Test Your Knowledge',"studyStart("+i+")")+'</div></div>').join('')+'<div class="panel span6"><h3>Mixed Challenge</h3><p>Identify patterns across all categories.</p>'+btn('Test Your Knowledge',"studyStart(-1)")+'</div></div>');return}
- if(section==='article'){let l=lessons[chosen];el.innerHTML=wrap(btn('← All categories','studyHome()')+'<h3>'+l.title+'</h3><p>'+l.intro+'</p>'+l.cards.map(c=>'<div style="padding:18px;margin:14px 0;border:1px solid rgba(191,132,255,.4);border-radius:16px;background:rgba(14,8,31,.36);backdrop-filter:blur(6px)"><h3 style="color:#e6baff">'+c[0]+'</h3>'+diagram(c[3],c[0]==='Symmetrical Triangle',c[0])+'<h4 style="color:#dcb7ff;margin:12px 0 4px">Pattern description</h4><p>'+c[1]+'</p>'+checklist(c)+'</div>').join('')+'<div class="actions">'+btn('Test Your Knowledge',"studyStart("+chosen+")")+'</div>');return}
+ if(section==='article'){let l=lessons[chosen];el.innerHTML=wrap(btn('← All categories','studyHome()')+'<h3>'+l.title+'</h3><p>'+l.intro+'</p>'+l.cards.map(c=>'<div style="padding:18px;margin:14px 0;border:1px solid rgba(191,132,255,.4);border-radius:16px;background:rgba(14,8,31,.36);backdrop-filter:blur(6px)"><h3 style="color:#e6baff">'+c[0]+'</h3>'+diagram(c[3],c[0].includes('Symmetrical Triangle'),c[0])+'<h4 style="color:#dcb7ff;margin:12px 0 4px">Pattern description</h4><p>'+c[1]+'</p>'+checklist(c)+'</div>').join('')+'<div class="actions">'+btn('Test Your Knowledge',"studyStart("+chosen+")")+'</div>');return}
  if(section==='done'){el.innerHTML=wrap('<h3>Round complete</h3><p style="font-size:24px"><b>'+score+' / '+order.length+'</b> correct</p><div class="actions">'+btn('Try Again',"studyStart("+chosen+")")+' '+btn('Categories','studyHome()')+'</div>');return}
  const c=order[idx].card;const pool=order.map(x=>x.card[0]).filter(n=>n!==c[0]);for(const x of all.map(x=>x.card[0]))if(x!==c[0]&&!pool.includes(x))pool.push(x);const options=[c[0],...pool.slice(idx%Math.max(1,pool.length)).concat(pool.slice(0,idx%Math.max(1,pool.length))).slice(0,3)];const offset=idx%4;const rotated=options.slice(offset).concat(options.slice(0,offset));el.innerHTML=wrap(btn('← Categories','studyHome()')+'<h3>Test Your Knowledge · '+(idx+1)+' / '+order.length+'</h3><p>What pattern is shown?</p><div style="text-align:center;padding:12px;border-radius:12px;background:rgba(130,130,130,.08)">'+diagram(c[3],c[0]==='Symmetrical Triangle',c[0])+'</div><div class="actions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">'+rotated.map(n=>'<button class="btn secondary" '+(answered!==null?'disabled':'')+' onclick="studyAnswer('+JSON.stringify(n).replace(/"/g,'&quot;')+')">'+n+'</button>').join('')+'</div>'+(answered===null?'':'<p><b>'+(answered===c[0]?'Correct':'Not quite — '+c[0])+'</b></p><p>'+c[1]+' '+c[2]+'</p>'+btn(idx===order.length-1?'See score':'Next pattern','studyNext()')))}
 window.studyHome=()=>{section='home';renderCenter()};

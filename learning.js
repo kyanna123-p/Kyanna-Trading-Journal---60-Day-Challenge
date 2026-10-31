@@ -131,7 +131,7 @@ const lessons=[
  ["Bearish Opening Marubozu","A bearish real body opening at its high, usually with a lower shadow.","Sellers controlled price immediately after the open.",[[82,29,22,82]]],
  ["Green Spinning Top","A small green real body with noticeable upper and lower shadows.","Indecision; direction depends on surrounding price action.",[[49,55,24,80]]],
  ["Red Spinning Top","A small red real body with noticeable upper and lower shadows.","Indecision; direction depends on surrounding price action.",[[55,49,24,80]]],
- ["Long-Legged Doji","Open and close are nearly equal with long shadows on both sides.","Strong two-sided volatility with little net progress.",[[52,52,17,87]]],
+ ["Long-Legged Doji","Open and close are nearly equal with long shadows on both sides.","Strong two-sided volatility with little net progress.",[[51,52,17,87],[52,51,17,87]]],
  ["Bullish Doji","A doji that closes slightly above its open.","Indecision despite a marginal bullish finish.",[[50,51,33,69]]],
  ["Bearish Doji","A doji that closes slightly below its open.","Indecision despite a marginal bearish finish.",[[51,50,33,69]]],
  ["Cross Doji","A very small body with a longer lower shadow and a short upper shadow.","A cross-like indecision candle; compare with the dragonfly doji.",[[64,64,20,69]]],
@@ -234,9 +234,9 @@ Object.assign(shapes,{
 'Harami (Overview)':[[20,84,17,88],[65,54,51,69]],
 'Long-Legged Doji':[[51,52,17,87],[52,51,17,87]]
 });
-function diagram(c,triangle=false,name='',hideName=false){
+function diagram(c,triangle=false,name='',hideName=false,anatomy=false){
  if(formationArt[name])return formationDiagram(name,hideName);
- const bars=shapes[name]||c;
+ const bars=anatomy?c:(shapes[name]||c);
  const min=Math.min(...bars.map(v=>v[2])),max=Math.max(...bars.map(v=>v[3]));
  const y=n=>151-(n-min)/(max-min||1)*123;
  const spacing=bars.length<=1?0:Math.min(58,262/(bars.length-1));
@@ -253,7 +253,7 @@ function diagram(c,triangle=false,name='',hideName=false){
   'Three White Soldiers':[2,3,4],'Three Black Crows':[2,3,4],
   'Dragonfly Doji':[2],'Gravestone Doji':[2]
  };
- const selected=highlights[name]||bars.map((_,i)=>i);
+ const selected=anatomy?bars.map((_,i)=>i):(highlights[name]||bars.map((_,i)=>i));
  const ys=selected.flatMap(i=>bars[i]?[y(bars[i][3]),y(bars[i][2])]:[]);
  if(ys.length){
   const x1=x(selected[0])-17,x2=x(selected[selected.length-1])+17,top=Math.max(8,Math.min(...ys)-9),bottom=Math.min(171,Math.max(...ys)+9);
@@ -379,7 +379,7 @@ function renderCenter(){
  }
  if(section==='article'){
   const l=lessons[chosen];
-  el.innerHTML=wrap(btn('← All categories','studyHome()')+'<h3>'+l.title+'</h3><p>'+l.intro+'</p>'+(l.id==='neutral'?candleStrengthNotes():'')+l.cards.map(c=>'<div style="padding:18px;margin:14px 0;border:1px solid rgba(191,132,255,.4);border-radius:16px;background:rgba(14,8,31,.36);backdrop-filter:blur(6px)"><h3 style="color:#e6baff">'+c[0]+'</h3><p class="muted" style="margin:0 0 12px">'+classification(c,l)+'</p>'+diagram(c[3],false,c[0])+'<h4 style="color:#dcb7ff;margin:12px 0 4px">Pattern description</h4><p>'+c[1]+'</p>'+checklist(c)+studyExtras(c,l)+'</div>').join('')+'<div class="actions">'+btn('Test 10',"studyStart("+chosen+",10)")+' '+btn('Test All',"studyStart("+chosen+",0)")+'</div>');return;
+  el.innerHTML=wrap(btn('← All categories','studyHome()')+'<h3>'+l.title+'</h3><p>'+l.intro+'</p>'+(l.id==='neutral'?candleStrengthNotes():'')+l.cards.map(c=>'<div style="padding:18px;margin:14px 0;border:1px solid rgba(191,132,255,.4);border-radius:16px;background:rgba(14,8,31,.36);backdrop-filter:blur(6px)"><h3 style="color:#e6baff">'+c[0]+'</h3><p class="muted" style="margin:0 0 12px">'+classification(c,l)+'</p>'+diagram(c[3],false,c[0],false,l.id==='neutral')+'<h4 style="color:#dcb7ff;margin:12px 0 4px">Pattern description</h4><p>'+c[1]+'</p>'+checklist(c)+studyExtras(c,l)+'</div>').join('')+'<div class="actions">'+btn('Test 10',"studyStart("+chosen+",10)")+' '+btn('Test All',"studyStart("+chosen+",0)")+'</div>');return;
  }
  if(section==='done'){
   el.innerHTML=wrap('<h3>Round complete</h3><p style="font-size:24px"><b>'+score+' / '+order.length+'</b> correct</p><div class="actions">'+btn('Try Again',"studyStart("+chosen+","+quizCount+")")+' '+btn('Categories','studyHome()')+'</div>');return;
@@ -388,7 +388,7 @@ function renderCenter(){
  const question='<h3>Test Your Knowledge · '+(idx+1)+' / '+order.length+'</h3><p>'+questionPrompt+'</p>';
  const opts='<div class="actions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px">'+questionOptions.map(n=>'<button class="btn secondary" style="white-space:normal;text-align:left;min-height:46px" '+(answered!==null?'disabled':'')+' onclick="studyAnswer('+JSON.stringify(n).replace(/"/g,'&quot;')+')">'+n+'</button>').join('')+'</div>';
  const feedback=answered===null?'':'<p><b>'+(answered===correctAnswer?'Correct':'Not quite — '+correctAnswer)+'</b></p><p>'+c[1]+' '+c[2]+'</p>'+btn(idx===order.length-1?'See score':'Next pattern','studyNext()');
- el.innerHTML=wrap(btn('← Categories','studyHome()')+question+'<div style="padding:12px;border-radius:12px;background:rgba(130,130,130,.08)">'+diagram(c[3],false,c[0],true)+'</div>'+opts+feedback);
+ el.innerHTML=wrap(btn('← Categories','studyHome()')+question+'<div style="padding:12px;border-radius:12px;background:rgba(130,130,130,.08)">'+diagram(c[3],false,c[0],true,item.lesson.id==='neutral')+'</div>'+opts+feedback);
 }
 window.studyHome=()=>{section='home';renderCenter()};
 window.studyOpen=i=>{chosen=i;section='article';renderCenter()};

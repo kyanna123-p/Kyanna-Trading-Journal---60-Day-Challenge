@@ -72,14 +72,14 @@ Object.assign(shapes,{
 "Tweezer Tops":[[18,33,15,36],[33,52,30,55],[52,70,49,77],[70,57,54,77],[57,39,36,60]],
 "Three Line Strike (Bearish Reversal)":[[15,28,12,31],[28,43,25,46],[43,58,40,61],[58,74,55,77],[76,20,17,79]]
 });
-/* Distinct, pattern-specific OHLC examples. Values: [open,close,low,high]. */
+/* Pattern-defining candles only: distinguish body gaps from full wick gaps. */
 Object.assign(shapes,{
-'Morning Star':[[90,76,73,94],[76,60,57,80],[60,35,31,63],[31,35,28,39],[36,62,33,66],[62,76,59,79]],
-'Morning Star Doji':[[90,76,73,94],[76,59,56,80],[59,34,31,63],[29,29,26,32],[35,64,32,67],[64,78,61,81]],
-'Abandoned Baby Bottom':[[90,76,73,94],[76,58,55,80],[58,38,35,61],[24,24,21,27],[39,66,36,69],[66,78,63,81]],
-'Evening Star':[[10,24,7,27],[24,42,21,45],[42,68,39,71],[70,66,63,73],[65,38,35,68],[38,25,22,41]],
-'Evening Star Doji':[[10,24,7,27],[24,43,21,46],[43,69,40,72],[75,75,72,78],[67,38,35,70],[38,25,22,41]],
-'Abandoned Baby Top':[[10,24,7,27],[24,43,21,46],[43,63,40,66],[78,78,75,81],[63,36,33,66],[36,22,19,39]]
+'Morning Star':[[88,49,45,92],[42,48,38,52],[49,83,46,87]],
+'Morning Star Doji':[[88,49,43,92],[46,46,41,52],[49,84,44,88]],
+'Abandoned Baby Bottom':[[88,53,48,92],[31,31,26,36],[49,84,44,88]],
+'Evening Star':[[12,51,8,55],[58,52,49,63],[51,16,12,55]],
+'Evening Star Doji':[[12,51,8,56],[54,54,47,59],[51,16,12,56]],
+'Abandoned Baby Top':[[12,47,8,52],[69,69,64,74],[49,16,12,54]]
 });
 function diagram(c,triangle=false,name=''){
  const bars=shapes[name]||c;
@@ -89,7 +89,7 @@ function diagram(c,triangle=false,name=''){
  let out='<svg viewBox="0 0 340 175" role="img" aria-label="'+name+' candlestick chart" style="width:100%;max-width:430px;background:rgba(10,7,24,.55);border-radius:12px">';
  if(triangle)out+='<path d="M35 27 L305 88 L35 150" fill="none" stroke="#b983ff" stroke-width="2" stroke-dasharray="5 5"/>';
  bars.forEach((v,i)=>{const [o,cl,lo,hi]=v,x=40+i*spacing,up=cl>=o,color=up?'#20d69a':'#f25565',top=Math.min(y(o),y(cl)),h=Math.max(3,Math.abs(y(o)-y(cl)));out+='<line x1="'+x+'" x2="'+x+'" y1="'+y(hi)+'" y2="'+y(lo)+'" stroke="'+color+'" stroke-width="2.5"/><rect x="'+(x-10)+'" y="'+top+'" width="20" height="'+h+'" rx="1.5" fill="'+color+'"/>';});
- const highlighted=({Hammer:[4], 'Bullish Engulfing':[4,5], 'Morning Star':[2,3,4], 'Shooting Star':[4], 'Hanging Man':[4], 'Bearish Engulfing':[4,5], 'Evening Star':[2,3,4],'Neutral Green Candle':[0],'Neutral Red Candle':[0]})[name];
+ const highlighted=({'Morning Star':[0,1,2],'Morning Star Doji':[0,1,2],'Abandoned Baby Bottom':[0,1,2],'Evening Star':[0,1,2],'Evening Star Doji':[0,1,2],'Abandoned Baby Top':[0,1,2],Hammer:[4], 'Bullish Engulfing':[4,5], 'Morning Star':[2,3,4], 'Shooting Star':[4], 'Hanging Man':[4], 'Bearish Engulfing':[4,5], 'Evening Star':[2,3,4],'Neutral Green Candle':[0],'Neutral Red Candle':[0]})[name];
  if(highlighted){const x1=40+highlighted[0]*spacing-17,x2=40+highlighted[highlighted.length-1]*spacing+17;out+='<rect x="'+x1+'" y="9" width="'+(x2-x1)+'" height="153" rx="10" fill="none" stroke="#b983ff" stroke-width="2" opacity=".85"/>';}
  return out+'</svg>';
 }

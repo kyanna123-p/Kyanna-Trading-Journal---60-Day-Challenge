@@ -221,17 +221,48 @@ function formationDiagram(name,hideName=false){
  const color=f.bias==='bull'?'#34dba7':f.bias==='bear'?'#fa7185':'#d0bcff';
  return '<svg viewBox="0 0 340 184" role="img" aria-label="'+(hideName?'Identify this chart formation':name)+'" style="display:block;width:100%;max-width:480px;background:rgba(10,7,24,.50);border-radius:12px"><rect x="3" y="3" width="334" height="178" rx="11" fill="none" stroke="rgba(177,129,243,.22)"/>'+grid+lines+'<polyline points="'+pts+'" stroke="#d8d4f5" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round" fill="none"/><line x1="'+prior[0]+'" y1="'+prior[1]+'" x2="'+breakout[0]+'" y2="'+breakout[1]+'" stroke="'+color+'" stroke-width="4" stroke-linecap="round"/><circle cx="'+breakout[0]+'" cy="'+breakout[1]+'" r="4" fill="'+color+'"/><text x="14" y="175" fill="#f1bd56" font-size="10">'+f.tag+'</text></svg>';
 }
-function diagram(c,triangle=false,name=''){
- if(formationArt[name])return formationDiagram(name);
+
+Object.assign(shapes,{
+ 'Three Line Strike (Bullish Reversal)':[[87,75,72,91],[75,61,58,79],[61,47,44,64],[43,89,40,93]],
+ 'Three Line Strike (Bearish Reversal)':[[15,29,12,32],[29,44,26,47],[44,61,41,64],[65,11,8,68]],
+ 'Three Inside Up':[[83,34,31,87],[42,52,39,55],[52,91,49,94]],
+ 'Three Inside Down':[[20,75,17,79],[62,51,48,65],[51,13,10,54]],
+ 'Piercing Line':[[85,70,67,88],[70,55,52,73],[55,33,30,58],[28,48,24,52],[48,60,45,63]]
+});
+function diagram(c,triangle=false,name='',hideName=false){
+ if(formationArt[name])return formationDiagram(name,hideName);
  const bars=shapes[name]||c;
  const min=Math.min(...bars.map(v=>v[2])),max=Math.max(...bars.map(v=>v[3]));
- const y=n=>150-(n-min)/(max-min||1)*125;
- const spacing=260/Math.max(1,bars.length-1);
- let out='<svg viewBox="0 0 340 175" role="img" aria-label="'+name+' candlestick chart" style="width:100%;max-width:430px;background:rgba(10,7,24,.55);border-radius:12px">';
- if(triangle)out+='<path d="M35 27 L305 88 L35 150" fill="none" stroke="#b983ff" stroke-width="2" stroke-dasharray="5 5"/>';
- bars.forEach((v,i)=>{const [o,cl,lo,hi]=v,x=40+i*spacing,up=cl>=o,color=up?'#20d69a':'#f25565',top=Math.min(y(o),y(cl)),h=Math.max(3,Math.abs(y(o)-y(cl)));out+='<line x1="'+x+'" x2="'+x+'" y1="'+y(hi)+'" y2="'+y(lo)+'" stroke="'+color+'" stroke-width="2.5"/><rect x="'+(x-10)+'" y="'+top+'" width="20" height="'+h+'" rx="1.5" fill="'+color+'"/>';});
- const highlighted=({'Morning Star':[0,1,2],'Morning Star Doji':[0,1,2],'Abandoned Baby Bottom':[0,1,2],'Evening Star':[0,1,2],'Evening Star Doji':[0,1,2],'Abandoned Baby Top':[0,1,2],Hammer:[4], 'Bullish Engulfing':[4,5], 'Shooting Star':[4], 'Hanging Man':[4], 'Bearish Engulfing':[4,5], 'Evening Star':[2,3,4],'Neutral Green Candle':[0],'Neutral Red Candle':[0]})[name];
- if(highlighted){const x1=40+highlighted[0]*spacing-17,x2=40+highlighted[highlighted.length-1]*spacing+17;out+='<rect x="'+x1+'" y="9" width="'+(x2-x1)+'" height="153" rx="10" fill="none" stroke="#b983ff" stroke-width="2" opacity=".85"/>';}
+ const y=n=>151-(n-min)/(max-min||1)*123;
+ const spacing=bars.length<=1?0:Math.min(58,262/(bars.length-1));
+ const start=170-(bars.length-1)*spacing/2;
+ const x=i=>start+i*spacing;
+ let out='<svg viewBox="0 0 340 182" role="img" aria-label="'+(hideName?'Identify the candlestick pattern':name+' candlestick illustration')+'" style="display:block;width:100%;max-width:480px;background:rgba(10,7,24,.55);border-radius:12px">';
+ out+='<rect x="3" y="3" width="334" height="176" rx="10" fill="none" stroke="rgba(176,139,235,.23)"/>';
+ [46,90,135].forEach(v=>{out+='<line x1="12" y1="'+v+'" x2="328" y2="'+v+'" stroke="rgba(190,171,226,.11)" stroke-width="1"/>';});
+ const highlights={
+  'Hammer':[4],'Inverted Hammer':[4],'Shooting Star':[4],'Hanging Man':[4],
+  'Bullish Engulfing':[4,5],'Bearish Engulfing':[4,5],
+  'Piercing Line':[2,3],'Dark Cloud Cover':[2,3],
+  'Tweezer Bottoms':[2,3],'Tweezer Tops':[2,3],
+  'Three White Soldiers':[2,3,4],'Three Black Crows':[2,3,4],
+  'Dragonfly Doji':[2],'Gravestone Doji':[2]
+ };
+ const selected=highlights[name]||bars.map((_,i)=>i);
+ const ys=selected.flatMap(i=>bars[i]?[y(bars[i][3]),y(bars[i][2])]:[]);
+ if(ys.length){
+  const x1=x(selected[0])-17,x2=x(selected[selected.length-1])+17,top=Math.max(8,Math.min(...ys)-9),bottom=Math.min(171,Math.max(...ys)+9);
+  out+='<rect x="'+x1+'" y="'+top+'" width="'+(x2-x1)+'" height="'+Math.max(15,bottom-top)+'" rx="7" fill="rgba(184,131,255,.07)" stroke="#b983ff" stroke-width="1.8"/>';
+ }
+ bars.forEach((v,i)=>{
+   const [o,cl,lo,hi]=v,cx=x(i),up=cl>=o,color=up?'#20d69a':'#f25565',bodyY=Math.min(y(o),y(cl)),bodyH=Math.max(3,Math.abs(y(o)-y(cl)));
+   out+='<line x1="'+cx+'" x2="'+cx+'" y1="'+y(hi)+'" y2="'+y(lo)+'" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round"/>';
+   if(Math.abs(cl-o)<=1)out+='<line x1="'+(cx-11)+'" y1="'+y((o+cl)/2)+'" x2="'+(cx+11)+'" y2="'+y((o+cl)/2)+'" stroke="'+color+'" stroke-width="3.8" stroke-linecap="round"/>';
+   else out+='<rect x="'+(cx-10)+'" y="'+bodyY+'" width="20" height="'+bodyH+'" rx="1.5" fill="'+color+'"/>';
+ });
+ if(name==='Abandoned Baby Bottom'||name==='Abandoned Baby Top'){
+  out+='<text x="170" y="173" font-size="10" fill="#cdb3f3" text-anchor="middle">Isolated doji · full wick gaps on both sides</text>';
+ }
  return out+'</svg>';
 }
 function checklist(c){

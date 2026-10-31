@@ -7,8 +7,8 @@ async function cloudInit(){
   if(!/^https:\/\//.test(cfg.url))throw Error('Supabase URL must use HTTPS.');
   if(!window.supabase?.createClient)throw Error('Supabase library did not load. Check your connection.');
   if(!cloudClient)cloudClient=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:true,autoRefreshToken:true}});
-  const {data:{user},error}=await cloudClient.auth.getUser();if(error&&error.name!=='AuthSessionMissingError')throw error;
-  cloudUser=user;return cloudClient;
+  const {data:{session},error}=await cloudClient.auth.getSession();if(error)throw error;
+  cloudUser=session?.user||null;return cloudClient;
 }
 function cloudMessage(s){const el=document.getElementById('cloudStatus');if(el)el.textContent=s;}
 function saveCloudConfig(){
@@ -18,13 +18,15 @@ function saveCloudConfig(){
  localStorage.setItem('tradecraftCloudConfig',JSON.stringify({url,key}));cloudClient=null;cloudUser=null;cloudRevision=null;cloudMessage('Configuration saved. Sign in to connect.');
 }
 async function cloudAuth(mode){try{
- const client=await cloudInit();const email=document.getElementById('cloudEmail').value.trim(),password=document.getElementById('cloudPassword').value;
+ const email=document.getElementById('cloudEmail').value.trim(),password=document.getElementById('cloudPassword').value;
  if(!email||password.length<6)throw Error('Enter email and password (at least six characters).');
+ cloudMessage(mode==='signup'?'Creating account…':'Signing in…');
+ const client=await cloudInit();
  const result=mode==='signup'?await client.auth.signUp({email,password}):await client.auth.signInWithPassword({email,password});
  if(result.error)throw result.error;cloudUser=result.data.user;
  cloudMessage(mode==='signup'&&!result.data.session?'Check your email to confirm your account, then sign in.':'Signed in. Download the cloud copy or upload this device.');
  document.getElementById('cloudPassword').value='';
- }catch(e){cloudMessage('Authentication error: '+e.message)}}
+ }catch(e){cloudMessage('Authentication error: '+(e.message||String(e))+(e.status?' (HTTP '+e.status+')':''));console.error('Supabase authentication failed',e)}}
 async function cloudSignOut(){try{const c=await cloudInit();await c.auth.signOut();cloudUser=null;cloudRevision=null;cloudMessage('Signed out. Local data remains on this device.')}catch(e){cloudMessage(e.message)}}
 async function uploadImages(copy){
  for(const type of ['trades','studies'])for(const item of copy[type]){
@@ -66,3 +68,4 @@ async function cloudDownload(){try{
 const originalRenderSettings=renderSettings;
 renderSettings=function(){originalRenderSettings();const cfg=cloudCfg();const settings=document.getElementById('settings');settings.insertAdjacentHTML('afterbegin',`<div class="panel" style="margin-bottom:16px"><h2>☁ Cloud Sync — Supabase</h2><p>Sync securely between devices. Manual upload/download prevents accidental overwrites. <b>Export a JSON backup before the first sync.</b></p><div class="inline2"><div class="field"><label>Project URL</label><input id="supabaseUrl" placeholder="https://your-project.supabase.co" value="${esc(cfg.url||'')}"></div><div class="field"><label>Publishable / anon key (never service-role)</label><input id="supabaseKey" type="password" placeholder="sb_publishable_..." value="${esc(cfg.key||'')}"></div></div><button class="btn secondary" onclick="saveCloudConfig()">Save connection</button><div class="inline2" style="margin-top:14px"><div class="field"><label>Email</label><input id="cloudEmail" type="email" autocomplete="email"></div><div class="field"><label>Password</label><input id="cloudPassword" type="password" autocomplete="current-password"></div></div><div class="actions"><button class="btn secondary" onclick="cloudAuth('signup')">Create account</button><button class="btn" onclick="cloudAuth('signin')">Sign in</button><button class="btn secondary" onclick="cloudSignOut()">Sign out</button></div><hr style="opacity:.2;margin:16px 0"><div class="actions"><button class="btn" onclick="cloudUpload()">↑ Upload this device</button><button class="btn secondary" onclick="cloudDownload()">↓ Download cloud copy</button></div><p id="cloudStatus" class="muted" role="status">Not connected. See README for setup.</p><p class="muted">Images are stored privately in Supabase Storage. Cloud data is not automatically merged. Requires an HTTPS-hosted page.</p></div>`)};
 renderSettings();
+cloudMessage('Connection settings loaded. Save connection, then create an account or sign in.');

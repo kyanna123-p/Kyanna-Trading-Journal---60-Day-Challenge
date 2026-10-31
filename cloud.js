@@ -119,6 +119,6 @@ renderSettings=function(){
  const status=document.getElementById('cloudStatus');
  if(!status||document.getElementById('cloudAutoButton'))return;
  status.textContent=cloudLastMessage;
- status.insertAdjacentHTML('beforebegin','<div class="actions"><button id="cloudAutoButton" class="btn secondary" onclick="cloudToggleAuto()">Enable automatic saving</button></div><p class="muted">Automatic saving is opt-in per open tab. Changes upload after 2 seconds of inactivity. For changes from another device, use Download cloud copy before editing. Conflicts stop uploads rather than overwriting newer data.</p>');
+ status.insertAdjacentHTML('beforebegin','<div class="actions"><button id="cloudAutoButton" class="btn secondary" onclick="cloudToggleAuto()">${cloudAutoEnabled?'Pause automatic saving':'Enable automatic saving'}</button></div><p class="muted">Automatic saving is opt-in per open tab. Changes upload after 2 seconds of inactivity. For changes from another device, use Download cloud copy before editing. Conflicts stop uploads rather than overwriting newer data.</p>');
 };
 renderSettings();

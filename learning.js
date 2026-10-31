@@ -13,6 +13,28 @@ const lessons=[
  ['Morning Star Doji','A morning star whose middle candle is a doji.','Indecision followed by bullish confirmation.',[[84,69,66,87],[69,42,39,72],[34,34,29,38],[40,65,37,68]]],
  ['Tweezer Bottoms','Two candles test approximately the same low.','Potential support and bullish reversal with confirmation.',[[81,66,62,84],[66,49,45,69],[49,34,27,52],[33,47,27,51],[47,63,44,66]]],
  ['Three Line Strike (Bullish Reversal)','A four-candle formation featuring three bearish candles and a large bullish fourth candle.','The final bullish candle can signal a shift; assess context.',[[87,76,73,90],[76,62,59,79],[62,49,46,65],[49,36,33,52],[34,82,31,85]]]
+,
+ ['Dragonfly Doji','A doji with a long lower wick and little or no upper wick.','Potential bullish rejection after a decline.',[[60,43,39,63],[43,27,24,46],[27,27,8,28]]]
+,
+ ['Bullish Spinning Top','A small green body with upper and lower shadows.','Indecision after a decline; confirmation is needed.',[[65,50,47,68],[50,35,32,53],[35,39,21,53]]]
+,
+ ['Bullish Kicker','A bearish candle is followed by a bullish candle opening above the prior body with a gap.','An abrupt change toward buying.',[[70,35,31,74],[57,85,54,89]]]
+,
+ ['Bullish Harami','A small bullish real body sits inside the prior large bearish real body.','Possible selling exhaustion after a decline.',[[85,30,27,89],[42,51,38,55]]]
+,
+ ['Bullish Harami Cross','A doji sits within the prior bearish real body.','Indecision after a decline.',[[85,30,27,89],[52,52,48,56]]]
+,
+ ['Bullish Engulfing Sandwich','A bullish reversal grouping shown in the cheat sheet.','Look for the engulfing body and surrounding candles.',[[78,49,46,81],[49,32,29,52],[28,58,25,61],[58,71,55,74]]]
+,
+ ['Rising Three','A strong bullish candle, three smaller pullback candles, then a bullish continuation candle.','Typically a bullish continuation formation.',[[30,72,27,76],[67,59,56,70],[59,53,50,62],[53,48,45,56],[49,84,46,88]]]
+,
+ ['Three Inside Up','A bearish candle, a smaller inside candle, then a bullish confirmation candle.','Potential bullish reversal.',[[83,34,31,87],[42,52,39,55],[52,77,49,81]]]
+,
+ ['Three Outside Up','Bullish engulfing followed by a bullish confirmation candle.','Potential bullish reversal.',[[65,47,44,68],[43,73,40,77],[72,86,69,90]]]
+,
+ ['Matching Low','Two bearish candles finish at approximately the same low.','Potential support and bullish reversal.',[[82,42,39,85],[68,42,39,72]]]
+,
+ ['Three Stars in the South','Three progressively smaller bearish candles with contracting ranges.','Potential exhaustion of a decline.',[[90,60,42,93],[73,56,48,77],[64,57,53,67]]]
  ]},
  {id:'bear',title:'Bearish Reversal Patterns',intro:'Potential downward reversals. Look for rejection and confirmation.',cards:[
  ['Shooting Star','Small body near the low with a long upper wick after an advance.','Potential bearish rejection near resistance.',[[30,45,28,42],[42,60,40,57],[56,73,54,70],[70,86,68,83],[83,85,79,99]]],
@@ -26,6 +48,30 @@ const lessons=[
  ['Dark Cloud Cover','A bearish candle opens above the prior bullish close and closes below its body midpoint.','Potential bearish reversal after an advance.',[[16,32,13,35],[32,50,29,53],[50,76,47,79],[81,58,55,84],[58,44,41,61]]],
  ['Tweezer Tops','Two candles test approximately the same high.','Potential resistance and bearish reversal with confirmation.',[[18,33,15,36],[33,52,30,55],[52,70,49,77],[70,57,54,77],[57,39,36,60]]],
  ['Three Line Strike (Bearish Reversal)','A four-candle formation featuring three bullish candles and a large bearish fourth candle.','The final bearish candle can signal a shift; assess context.',[[15,28,12,31],[28,43,25,46],[43,58,40,61],[58,74,55,77],[76,20,17,79]]]
+,
+ ['Gravestone Doji','A doji with a long upper wick and little or no lower wick.','Potential rejection of higher prices.',[[32,49,29,52],[49,67,46,70],[68,68,67,94]]]
+,
+ ['Bearish Spinning Top','A small red body with upper and lower shadows.','Indecision after an advance; confirmation is needed.',[[28,44,25,47],[44,60,41,63],[62,58,44,76]]]
+,
+ ['Bearish Kicker','A bullish candle is followed by a bearish candle opening below the prior body with a gap.','An abrupt change toward selling.',[[25,67,21,71],[44,13,10,47]]]
+,
+ ['Bearish Harami','A small bearish real body sits inside the prior large bullish real body.','Possible buying exhaustion after an advance.',[[20,83,17,87],[65,54,51,69]]]
+,
+ ['Bearish Harami Cross','A doji sits within the prior bullish real body.','Indecision after an advance.',[[20,83,17,87],[54,54,50,58]]]
+,
+ ['Bearish Engulfing Sandwich','A bearish engulfing sequence with surrounding candles.','Watch for a strong bearish engulfing body.',[[30,52,27,55],[52,70,49,73],[75,43,40,78],[43,30,27,46]]]
+,
+ ['Falling Three','A strong bearish candle, three small rebound candles, then bearish continuation.','Typically a bearish continuation formation.',[[82,37,33,86],[42,49,39,52],[49,55,46,58],[55,60,52,63],[59,22,19,63]]]
+,
+ ['Three Inside Down','A bullish candle, a smaller inside candle, then bearish confirmation.','Potential bearish reversal.',[[20,75,17,79],[62,51,48,65],[51,25,22,54]]]
+,
+ ['Three Outside Down','Bearish engulfing followed by a bearish confirmation candle.','Potential bearish reversal.',[[30,52,27,55],[57,23,20,60],[24,11,8,27]]]
+,
+ ['Matching High','Two bullish candles reach approximately the same high.','Potential resistance and bearish reversal.',[[22,70,19,75],[45,70,42,75]]]
+,
+ ['Advance Block','Three rising bullish candles with weakening bodies or growing upper wicks.','Possible buying exhaustion.',[[20,45,17,49],[44,61,41,70],[60,69,57,82]]]
+,
+ ['Upside Gap Two Crows','A bullish candle is followed by two bearish candles above its body.','Potential bearish reversal after an advance.',[[22,55,19,59],[70,60,57,73],[76,56,53,79]]]
  ]},
  {id:'neutral',title:'Candlesticks',intro:'Learn bullish and bearish candle anatomy. Either color can express indecision when the body is small.',cards:[
  ['Bullish Candle','A green candle closes above its opening price.','The body shows the open-to-close move; the wicks show the high and low.',[[35,70,27,79]]],
@@ -81,6 +127,7 @@ Object.assign(shapes,{
 'Evening Star Doji':[[12,51,8,56],[54,54,47,59],[51,16,12,56]],
 'Abandoned Baby Top':[[12,47,8,52],[69,69,64,74],[49,16,12,54]]
 });
+Object.assign(shapes,{"Dragonfly Doji":[[60,43,39,63],[43,27,24,46],[27,27,8,28]],"Bullish Spinning Top":[[65,50,47,68],[50,35,32,53],[35,39,21,53]],"Bullish Kicker":[[70,35,31,74],[57,85,54,89]],"Bullish Harami":[[85,30,27,89],[42,51,38,55]],"Bullish Harami Cross":[[85,30,27,89],[52,52,48,56]],"Bullish Engulfing Sandwich":[[78,49,46,81],[49,32,29,52],[28,58,25,61],[58,71,55,74]],"Rising Three":[[30,72,27,76],[67,59,56,70],[59,53,50,62],[53,48,45,56],[49,84,46,88]],"Three Inside Up":[[83,34,31,87],[42,52,39,55],[52,77,49,81]],"Three Outside Up":[[65,47,44,68],[43,73,40,77],[72,86,69,90]],"Matching Low":[[82,42,39,85],[68,42,39,72]],"Three Stars in the South":[[90,60,42,93],[73,56,48,77],[64,57,53,67]],"Gravestone Doji":[[32,49,29,52],[49,67,46,70],[68,68,67,94]],"Bearish Spinning Top":[[28,44,25,47],[44,60,41,63],[62,58,44,76]],"Bearish Kicker":[[25,67,21,71],[44,13,10,47]],"Bearish Harami":[[20,83,17,87],[65,54,51,69]],"Bearish Harami Cross":[[20,83,17,87],[54,54,50,58]],"Bearish Engulfing Sandwich":[[30,52,27,55],[52,70,49,73],[75,43,40,78],[43,30,27,46]],"Falling Three":[[82,37,33,86],[42,49,39,52],[49,55,46,58],[55,60,52,63],[59,22,19,63]],"Three Inside Down":[[20,75,17,79],[62,51,48,65],[51,25,22,54]],"Three Outside Down":[[30,52,27,55],[57,23,20,60],[24,11,8,27]],"Matching High":[[22,70,19,75],[45,70,42,75]],"Advance Block":[[20,45,17,49],[44,61,41,70],[60,69,57,82]],"Upside Gap Two Crows":[[22,55,19,59],[70,60,57,73],[76,56,53,79]]});
 function diagram(c,triangle=false,name=''){
  const bars=shapes[name]||c;
  const min=Math.min(...bars.map(v=>v[2])),max=Math.max(...bars.map(v=>v[3]));
@@ -89,7 +136,7 @@ function diagram(c,triangle=false,name=''){
  let out='<svg viewBox="0 0 340 175" role="img" aria-label="'+name+' candlestick chart" style="width:100%;max-width:430px;background:rgba(10,7,24,.55);border-radius:12px">';
  if(triangle)out+='<path d="M35 27 L305 88 L35 150" fill="none" stroke="#b983ff" stroke-width="2" stroke-dasharray="5 5"/>';
  bars.forEach((v,i)=>{const [o,cl,lo,hi]=v,x=40+i*spacing,up=cl>=o,color=up?'#20d69a':'#f25565',top=Math.min(y(o),y(cl)),h=Math.max(3,Math.abs(y(o)-y(cl)));out+='<line x1="'+x+'" x2="'+x+'" y1="'+y(hi)+'" y2="'+y(lo)+'" stroke="'+color+'" stroke-width="2.5"/><rect x="'+(x-10)+'" y="'+top+'" width="20" height="'+h+'" rx="1.5" fill="'+color+'"/>';});
- const highlighted=({'Morning Star':[0,1,2],'Morning Star Doji':[0,1,2],'Abandoned Baby Bottom':[0,1,2],'Evening Star':[0,1,2],'Evening Star Doji':[0,1,2],'Abandoned Baby Top':[0,1,2],Hammer:[4], 'Bullish Engulfing':[4,5], 'Morning Star':[2,3,4], 'Shooting Star':[4], 'Hanging Man':[4], 'Bearish Engulfing':[4,5], 'Evening Star':[2,3,4],'Neutral Green Candle':[0],'Neutral Red Candle':[0]})[name];
+ const highlighted=({'Morning Star':[0,1,2],'Morning Star Doji':[0,1,2],'Abandoned Baby Bottom':[0,1,2],'Evening Star':[0,1,2],'Evening Star Doji':[0,1,2],'Abandoned Baby Top':[0,1,2],Hammer:[4], 'Bullish Engulfing':[4,5], 'Shooting Star':[4], 'Hanging Man':[4], 'Bearish Engulfing':[4,5], 'Evening Star':[2,3,4],'Neutral Green Candle':[0],'Neutral Red Candle':[0]})[name];
  if(highlighted){const x1=40+highlighted[0]*spacing-17,x2=40+highlighted[highlighted.length-1]*spacing+17;out+='<rect x="'+x1+'" y="9" width="'+(x2-x1)+'" height="153" rx="10" fill="none" stroke="#b983ff" stroke-width="2" opacity=".85"/>';}
  return out+'</svg>';
 }
@@ -110,7 +157,7 @@ function renderCenter(){const el=document.getElementById('technicalStudyCenter')
  if(section==='home'){el.innerHTML=wrap('<div class="grid">'+lessons.map((l,i)=>'<div class="panel span6"><h3>'+l.title+'</h3><p>'+l.intro+'</p><div class="actions">'+btn('Read Article',"studyOpen("+i+")")+' '+btn('Test Your Knowledge',"studyStart("+i+")")+'</div></div>').join('')+'<div class="panel span6"><h3>Mixed Challenge</h3><p>Identify patterns across all categories.</p>'+btn('Test Your Knowledge',"studyStart(-1)")+'</div></div>');return}
  if(section==='article'){let l=lessons[chosen];el.innerHTML=wrap(btn('← All categories','studyHome()')+'<h3>'+l.title+'</h3><p>'+l.intro+'</p>'+l.cards.map(c=>'<div style="padding:18px;margin:14px 0;border:1px solid rgba(191,132,255,.4);border-radius:16px;background:rgba(14,8,31,.36);backdrop-filter:blur(6px)"><h3 style="color:#e6baff">'+c[0]+'</h3>'+diagram(c[3],c[0]==='Symmetrical Triangle',c[0])+'<h4 style="color:#dcb7ff;margin:12px 0 4px">Pattern description</h4><p>'+c[1]+'</p>'+checklist(c)+'</div>').join('')+'<div class="actions">'+btn('Test Your Knowledge',"studyStart("+chosen+")")+'</div>');return}
  if(section==='done'){el.innerHTML=wrap('<h3>Round complete</h3><p style="font-size:24px"><b>'+score+' / '+order.length+'</b> correct</p><div class="actions">'+btn('Try Again',"studyStart("+chosen+")")+' '+btn('Categories','studyHome()')+'</div>');return}
- const c=order[idx].card,options=[c[0],...all.map(x=>x.card[0]).filter(n=>n!==c[0])].slice(0,4);const offset=idx%4;const rotated=options.slice(offset).concat(options.slice(0,offset));el.innerHTML=wrap(btn('← Categories','studyHome()')+'<h3>Test Your Knowledge · '+(idx+1)+' / '+order.length+'</h3><p>What pattern is shown?</p><div style="text-align:center;padding:12px;border-radius:12px;background:rgba(130,130,130,.08)">'+diagram(c[3],c[0]==='Symmetrical Triangle',c[0])+'</div><div class="actions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">'+rotated.map(n=>'<button class="btn secondary" '+(answered!==null?'disabled':'')+' onclick="studyAnswer('+JSON.stringify(n).replace(/"/g,'&quot;')+')">'+n+'</button>').join('')+'</div>'+(answered===null?'':'<p><b>'+(answered===c[0]?'Correct':'Not quite — '+c[0])+'</b></p><p>'+c[1]+' '+c[2]+'</p>'+btn(idx===order.length-1?'See score':'Next pattern','studyNext()')))}
+ const c=order[idx].card;const pool=order.map(x=>x.card[0]).filter(n=>n!==c[0]);for(const x of all.map(x=>x.card[0]))if(x!==c[0]&&!pool.includes(x))pool.push(x);const options=[c[0],...pool.slice(idx%Math.max(1,pool.length)).concat(pool.slice(0,idx%Math.max(1,pool.length))).slice(0,3)];const offset=idx%4;const rotated=options.slice(offset).concat(options.slice(0,offset));el.innerHTML=wrap(btn('← Categories','studyHome()')+'<h3>Test Your Knowledge · '+(idx+1)+' / '+order.length+'</h3><p>What pattern is shown?</p><div style="text-align:center;padding:12px;border-radius:12px;background:rgba(130,130,130,.08)">'+diagram(c[3],c[0]==='Symmetrical Triangle',c[0])+'</div><div class="actions" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">'+rotated.map(n=>'<button class="btn secondary" '+(answered!==null?'disabled':'')+' onclick="studyAnswer('+JSON.stringify(n).replace(/"/g,'&quot;')+')">'+n+'</button>').join('')+'</div>'+(answered===null?'':'<p><b>'+(answered===c[0]?'Correct':'Not quite — '+c[0])+'</b></p><p>'+c[1]+' '+c[2]+'</p>'+btn(idx===order.length-1?'See score':'Next pattern','studyNext()')))}
 window.studyHome=()=>{section='home';renderCenter()};
 window.studyOpen=i=>{chosen=i;section='article';renderCenter()};
 window.studyStart=i=>{chosen=i;order=(i<0?all:lessons[i].cards.map(c=>({lesson:lessons[i],card:c}))).slice();idx=0;score=0;answered=null;section='quiz';renderCenter()};

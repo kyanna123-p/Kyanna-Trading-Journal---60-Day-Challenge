@@ -67,7 +67,7 @@ async function cloudDownload(){try{
  cloudSuppress=true;try{save()}finally{cloudSuppress=false}cloudRevision=row.revision;localStorage.setItem('tradecraftRevision:'+cloudUser.id,String(cloudRevision));cloudDirty=false;render();cloudMessage('Cloud copy downloaded. Revision '+cloudRevision+'.');
  }catch(e){cloudMessage('Download stopped: '+e.message)}}
 /* Cloud autosave state is initialized BEFORE rendering settings. */
-let cloudAuto=false,cloudDirty=false,cloudSuppress=false,cloudUploading=false,cloudTimer=null;
+let cloudAuto=false,cloudDirty=false,cloudSuppress=false,cloudUploading=false,cloudTimer=null,cloudPolling=false,cloudLastPoll=0;
 const cloudLocalSave=save;
 save=function(){
  cloudLocalSave();
@@ -80,6 +80,40 @@ function cloudSchedule(){
  if(!cloudAuto)return;
  cloudTimer=setTimeout(()=>{if(cloudUploading){cloudSchedule();return;}if(cloudDirty)cloudUpload();},2200);
 }
+async function cloudCheckUpdates(){
+ if(!cloudAuto||cloudPolling||cloudUploading||cloudDirty||document.hidden)return;
+ if(document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'))return;
+ cloudPolling=true;
+ try{
+  await cloudInit();
+  if(!cloudUser){cloudAuto=false;cloudMessage('Session ended. Sign in again.');return;}
+  const {data:remote,error}=await cloudClient.from('challenge_snapshots').select('revision').eq('user_id',cloudUser.id).maybeSingle();
+  if(error)throw error;
+  if(!remote||remote.revision===cloudRevision)return;
+  if(cloudRevision===null||remote.revision<cloudRevision){cloudAuto=false;cloudMessage('Cloud revision mismatch. Automatic sync paused; review copies manually.');return;}
+  const {data:row,error:readError}=await cloudClient.from('challenge_snapshots').select('payload,revision').eq('user_id',cloudUser.id).maybeSingle();
+  if(readError)throw readError;
+  if(!row||row.revision!==remote.revision||cloudDirty||cloudUploading||!cloudAuto)return;
+  const copy=row.payload;
+  for(const type of ['trades','studies'])for(const item of copy[type]||[]){
+   if(!item.image?.startsWith('storage:'))continue;
+   const path=item.image.slice(8),{data:blob,error:imgErr}=await cloudClient.storage.from('challenge-charts').download(path);
+   if(imgErr)throw imgErr;
+   item.image=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob)});
+  }
+  if(cloudDirty||cloudUploading||!cloudAuto||document.hidden||document.activeElement?.matches?.('input,textarea,select,[contenteditable="true"]'))return;
+  data=copy;
+  for(const k of Object.keys(blank()))if(!data[k])data[k]=blank()[k];
+  cloudSuppress=true;try{save()}finally{cloudSuppress=false}
+  cloudRevision=row.revision;
+  localStorage.setItem('tradecraftRevision:'+cloudUser.id,String(cloudRevision));
+  render();
+  cloudMessage('Automatically downloaded revision '+cloudRevision+'.');
+ }catch(e){cloudMessage('Automatic download check failed: '+e.message)}
+ finally{cloudPolling=false}
+}
+setInterval(()=>{if(cloudAuto&&Date.now()-cloudLastPoll>=10000){cloudLastPoll=Date.now();cloudCheckUpdates()}},3000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&cloudAuto)cloudCheckUpdates()});
 async function cloudToggleAuto(){
  if(cloudAuto){cloudAuto=false;clearTimeout(cloudTimer);cloudMessage('Automatic saving paused.');renderSettings();return;}
  try{
@@ -92,12 +126,12 @@ async function cloudToggleAuto(){
   if(!remote&&cloudRevision!==null)throw Error('Cloud copy missing. Upload this device first.');
   if(cloudRevision===null)throw Error('Upload or download a cloud copy first.');
   cloudAuto=true;
-  cloudMessage('Connected — automatic saving enabled. Changes upload after you leave a field.');
-  if(cloudDirty)cloudSchedule();
+  cloudMessage('Automatic sync enabled: upload after edits, check for updates every 10 seconds while open.');
+  if(cloudDirty)cloudSchedule();else cloudCheckUpdates();
  }catch(e){cloudAuto=false;cloudMessage('Automatic saving unavailable: '+e.message)}
  renderSettings();
 }
 const originalRenderSettings=renderSettings;
-renderSettings=function(){originalRenderSettings();const cfg=cloudCfg();const settings=document.getElementById('settings');settings.insertAdjacentHTML('afterbegin',`<div class="panel" style="margin-bottom:16px"><h2>☁ Cloud Sync — Supabase</h2><p>Sync securely between devices. Manual upload/download is available; optional automatic saving uploads local edits with revision checks. <b>Export a JSON backup before the first sync.</b></p><div class="inline2"><div class="field"><label>Project URL</label><input id="supabaseUrl" placeholder="https://your-project.supabase.co" value="${esc(cfg.url||'')}"></div><div class="field"><label>Publishable / anon key (never service-role)</label><input id="supabaseKey" type="password" placeholder="sb_publishable_..." value="${esc(cfg.key||'')}"></div></div><button class="btn secondary" onclick="saveCloudConfig()">Save connection</button><div class="inline2" style="margin-top:14px"><div class="field"><label>Email</label><input id="cloudEmail" type="email" autocomplete="email"></div><div class="field"><label>Password</label><input id="cloudPassword" type="password" autocomplete="current-password"></div></div><div class="actions"><button class="btn secondary" onclick="cloudAuth('signup')">Create account</button><button class="btn" onclick="cloudAuth('signin')">Sign in</button><button class="btn secondary" onclick="cloudSignOut()">Sign out</button></div><hr style="opacity:.2;margin:16px 0"><div class="actions"><button class="btn" onclick="cloudUpload()">↑ Upload this device</button><button class="btn secondary" onclick="cloudDownload()">↓ Download cloud copy</button></div><div class="actions"><button class="btn secondary" onclick="cloudToggleAuto()">${cloudAuto?'Pause automatic saving':'Enable automatic saving'}</button></div><p id="cloudStatus" class="muted" role="status">${esc(cloudStatusText)}</p><p class="muted">Images are stored privately in Supabase Storage. Cloud data is not automatically merged. Requires an HTTPS-hosted page.</p></div>`)};
+renderSettings=function(){originalRenderSettings();const cfg=cloudCfg();const settings=document.getElementById('settings');settings.insertAdjacentHTML('afterbegin',`<div class="panel" style="margin-bottom:16px"><h2>☁ Cloud Sync — Supabase</h2><p>Sync securely between devices. Manual upload/download is available; optional automatic sync uploads edits and checks for newer cloud versions every 10 seconds while open. <b>Export a JSON backup before the first sync.</b></p><div class="inline2"><div class="field"><label>Project URL</label><input id="supabaseUrl" placeholder="https://your-project.supabase.co" value="${esc(cfg.url||'')}"></div><div class="field"><label>Publishable / anon key (never service-role)</label><input id="supabaseKey" type="password" placeholder="sb_publishable_..." value="${esc(cfg.key||'')}"></div></div><button class="btn secondary" onclick="saveCloudConfig()">Save connection</button><div class="inline2" style="margin-top:14px"><div class="field"><label>Email</label><input id="cloudEmail" type="email" autocomplete="email"></div><div class="field"><label>Password</label><input id="cloudPassword" type="password" autocomplete="current-password"></div></div><div class="actions"><button class="btn secondary" onclick="cloudAuth('signup')">Create account</button><button class="btn" onclick="cloudAuth('signin')">Sign in</button><button class="btn secondary" onclick="cloudSignOut()">Sign out</button></div><hr style="opacity:.2;margin:16px 0"><div class="actions"><button class="btn" onclick="cloudUpload()">↑ Upload this device</button><button class="btn secondary" onclick="cloudDownload()">↓ Download cloud copy</button></div><div class="actions"><button class="btn secondary" onclick="cloudToggleAuto()">${cloudAuto?'Pause automatic saving':'Enable automatic saving'}</button></div><p id="cloudStatus" class="muted" role="status">${esc(cloudStatusText)}</p><p class="muted">Images are stored privately in Supabase Storage. Cloud data is not automatically merged. Requires an HTTPS-hosted page.</p></div>`)};
 renderSettings();
 (async()=>{try{if(!cloudCfg().url)return;await cloudInit();cloudMessage(cloudUser?'Signed in. Enable automatic saving when ready.':'Not signed in.')}catch(e){cloudMessage('Connection check: '+e.message)}})();

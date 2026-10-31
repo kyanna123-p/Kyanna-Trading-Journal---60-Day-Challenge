@@ -33,11 +33,6 @@ const lessons=[
  ['Neutral Green Candle','A small green real body with upper and lower wicks.','Buyers and sellers are relatively balanced despite the slightly higher close.',[[49,53,23,78]]],
  ['Neutral Red Candle','A small red real body with upper and lower wicks.','Buyers and sellers are relatively balanced despite the slightly lower close.',[[53,49,23,78]]]
  ]},
- {id:'levels',title:'Support & Resistance',intro:'Price zones where buyers or sellers have previously reacted.',cards:[
- ['Support Rejection','Price tests a support zone and rebounds.','Watch for confirmation rather than assuming the level must hold.',[[75,65,60,78],[66,53,49,69],[54,42,39,56],[43,60,35,63]]],
- ['Resistance Rejection','Price tests resistance and pulls back.','A failed push above resistance may precede a decline.',[[25,40,22,43],[40,55,38,58],[54,70,51,74],[71,53,50,75]]],
- ['Breakout and Retest','Price breaks a level and returns to test it.','Look for acceptance beyond the level and an orderly retest.',[[35,46,33,49],[47,62,44,65],[61,76,58,79],[75,69,66,78],[70,86,68,88]]]
- ]},
  {id:'charts',title:'Chart Formations',intro:'Formations describe structure; breakout direction needs confirmation.',cards:[
  ['Symmetrical Triangle','Converging highs and lows create a narrowing range.','Wait for a confirmed break rather than predicting direction.',[[30,45,24,48],[44,29,27,47],[31,43,29,45],[42,34,32,44],[35,40,33,42]]]
  ]}
@@ -76,6 +71,15 @@ Object.assign(shapes,{
 "Dark Cloud Cover":[[16,32,13,35],[32,50,29,53],[50,76,47,79],[81,58,55,84],[58,44,41,61]],
 "Tweezer Tops":[[18,33,15,36],[33,52,30,55],[52,70,49,77],[70,57,54,77],[57,39,36,60]],
 "Three Line Strike (Bearish Reversal)":[[15,28,12,31],[28,43,25,46],[43,58,40,61],[58,74,55,77],[76,20,17,79]]
+});
+/* Distinct, pattern-specific OHLC examples. Values: [open,close,low,high]. */
+Object.assign(shapes,{
+'Morning Star':[[90,76,73,94],[76,60,57,80],[60,35,31,63],[31,35,28,39],[36,62,33,66],[62,76,59,79]],
+'Morning Star Doji':[[90,76,73,94],[76,59,56,80],[59,34,31,63],[29,29,26,32],[35,64,32,67],[64,78,61,81]],
+'Abandoned Baby Bottom':[[90,76,73,94],[76,58,55,80],[58,38,35,61],[24,24,21,27],[39,66,36,69],[66,78,63,81]],
+'Evening Star':[[10,24,7,27],[24,42,21,45],[42,68,39,71],[70,66,63,73],[65,38,35,68],[38,25,22,41]],
+'Evening Star Doji':[[10,24,7,27],[24,43,21,46],[43,69,40,72],[75,75,72,78],[67,38,35,70],[38,25,22,41]],
+'Abandoned Baby Top':[[10,24,7,27],[24,43,21,46],[43,63,40,66],[78,78,75,81],[63,36,33,66],[36,22,19,39]]
 });
 function diagram(c,triangle=false,name=''){
  const bars=shapes[name]||c;

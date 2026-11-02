@@ -96,7 +96,7 @@ function premarketFor(d,m){return data.studies.find(s=>s.source==='premarket'&&s
 function chartProgress(d){return markets.filter(m=>!!premarketFor(d,m)?.image).length}
 function weeklyStudies(w){return data.studies.filter(s=>weekIndex(s.date)===w&&(s.source!=='premarket'||!!s.image))}
 function marketContext(d,m){let p=premarketFor(d,m);return p?[(p.state||'State not selected'),(p.bias||'Wait'),p.level?('Level: '+p.level):''].filter(Boolean).join(' · '):'No pre-market chart saved for '+m}
-function optionTags(options,chosen){return options.map(x=>`<option value="${esc(x)" ${x===chosen?'selected':''}>${x||'Select'</option>`).join('')}
+function optionTags(options,chosen){return options.map(x=>`<option value="${esc(x)}" ${x===chosen?'selected':''}>${x||'Select'}</option>`).join('')}
 async function savePremarket(e,m){
  e.preventDefault();let b=new FormData(e.target),s=premarketFor(date,m);
  try{
@@ -129,15 +129,15 @@ function renderDaily(){
  <div class="light-inner">${checks('prep')}</div>
  ${field('Economic catalysts (optional)','catalysts',r.notes.catalysts||'','textarea')}
  <div class="grid">
- ${markets.map(m=>{let s=premarketFor(date,m)||{};return `<form class="panel span6" onsubmit="savePremarket(event,'${m')">
- <div class="row"><h3>${m</h3><span class="muted">${s.image?'✓ Chart counted':'Upload chart to count'}</span></div>
+ ${markets.map(m=>{let s=premarketFor(date,m)||{};return `<form class="panel span6" onsubmit="savePremarket(event,'${m}')">
+ <div class="row"><h3>${m}</h3><span class="muted">${s.image?'✓ Chart counted':'Upload chart to count'}</span></div>
  <div class="inline2">
  <div class="field"><label>4H / 1H state</label><select name="state">${optionTags(['','Trending up','Trending down','Range / chop','Breakout watch'],s.state||'')}</select></div>
  <div class="field"><label>Directional bias</label><select name="bias">${optionTags(['Wait','Long','Short'],s.bias||'Wait')}</select></div>
  </div>
- <div class="field"><label>Key zone or MA (optional)</label><input name="level" placeholder="Support, resistance, or daily MA" value="${esc(s.level||'')"></div>
+ <div class="field"><label>Key zone or MA (optional)</label><input name="level" placeholder="Support, resistance, or daily MA" value="${esc(s.level||'')}"></div>
  ${imageInput('premarketImage-'+m)}
- ${s.image?`<img class="photo" src="${s.image" alt="${m pre-market chart" loading="lazy">`:''}
+ ${s.image?`<img class="photo" src="${s.image}" alt="${m} pre-market chart" loading="lazy">`:''}
  <button class="btn" type="submit">${s.image?'Update analysis':'Save analysis'}</button>
  </form>`}).join('')}
  </div></div>
@@ -197,7 +197,7 @@ function renderTrades(){
  <div class="hint"><b>Pre-market:</b> ${esc(premarketFor(t.date,t.market)?marketContext(t.date,t.market):(t.setup||'No saved chart'))}</div>
  <p>${esc(t.confirmation||t.setup||'')}${t.stop?' · Stop: '+esc(t.stop):''}</p>
  ${t.execution?`<p>${esc(t.execution)}</p>`:''}${t.lesson?`<p>${esc(t.lesson)}</p>`:''}
- ${t.image?`<img class="photo" src="${t.image" alt="Trade chart">`:''}</div>`).join('')}</div>`:'<div class="empty">No trades logged. A no-trade day is valid.</div>'}</div></div>`
+ ${t.image?`<img class="photo" src="${t.image}" alt="Trade chart">`:''}</div>`).join('')}</div>`:'<div class="empty">No trades logged. A no-trade day is valid.</div>'}</div></div>`
 }
 function weekIndex(d){let idx=days.indexOf(d);if(idx<0)return -1;return Math.floor(idx/5)}
 function removeStudy(id){if(confirm('Delete this chart record?')){data.studies=data.studies.filter(s=>String(s.id)!==String(id));save();render()}}
@@ -209,12 +209,12 @@ function renderStudies(){
  <button class="btn" onclick="go('daily')">Open pre-market charts →</button>
  <div class="grid" style="margin-top:14px">${ds.map(d=>`<div class="panel span6"><h3>${d} · ${chartProgress(d)}/4 charts</h3><div class="cardlist">
  ${markets.map(m=>{let s=premarketFor(d,m);return `<div class="item"><div class="row"><b>${m}</b><span class="muted">${s?.image?'✓ Counted':'Missing chart'}</span></div>
- ${s?.image?`<img class="photo" src="${s.image" alt="${m chart for ${d" loading="lazy">`:''}
+ ${s?.image?`<img class="photo" src="${s.image}" alt="${m} chart for ${d}" loading="lazy">`:''}
  <small>${esc(marketContext(d,m))}</small>
  ${s?`<button class="btn danger small" onclick="removeStudy('${s.id}')">Delete chart</button>`:''}</div>`}).join('')}</div></div>`).join('')}</div>
  ${items.some(s=>s.source!=='premarket')?`<div class="panel"><h3>Previously saved written studies</h3><div class="cardlist">
  ${items.filter(s=>s.source!=='premarket').map(s=>`<div class="item"><div class="row"><b>${esc(s.market)} · ${esc(s.type)}</b><button class="btn danger small" onclick="removeStudy('${s.id}')">Delete</button></div>
- <small>${esc(s.date)}</small><p>${esc(s.context||'')}</p><p>${esc(s.edge||'')}</p><p>${esc(s.execution||'')}</p><p>${esc(s.lesson||'')}</p>${s.image?`<img class="photo" src="${s.image" alt="Chart study">`:''}</div>`).join('')}</div></div>`:''}
+ <small>${esc(s.date)}</small><p>${esc(s.context||'')}</p><p>${esc(s.edge||'')}</p><p>${esc(s.execution||'')}</p><p>${esc(s.lesson||'')}</p>${s.image?`<img class="photo" src="${s.image}" alt="Chart study">`:''}</div>`).join('')}</div></div>`:''}
  </div>`
 }
 function renderAnalytics(){let used=days.filter(d=>data.daily[d]),done=used.filter(completed),trades=data.trades.filter(t=>days.includes(t.date)),valid=trades.filter(t=>t.pnl!==''&&Number.isFinite(Number(t.pnl))),pnl=valid.reduce((a,t)=>a+Number(t.pnl),0),wins=valid.filter(t=>Number(t.pnl)>0),weekCounts=Array.from({length:12},(_,i)=>weeklyStudies(i).length);$('analytics').innerHTML=`<div class="grid"><div class="panel span3"><div class="muted">COMPLETE PROCESS DAYS</div><div class="metric">${done.length} / 60</div></div><div class="panel span3"><div class="muted">AVERAGE PROCESS SCORE</div><div class="metric">${used.length?Math.round(used.reduce((a,d)=>a+score(d),0)/used.length):0}</div></div><div class="panel span3"><div class="muted">LOGGED TRADES</div><div class="metric">${trades.length}</div><div class="muted">${valid.length?Math.round(wins.length/valid.length*100)+'% profitable among recorded P/L':'No recorded P/L yet'}</div></div><div class="panel span3"><div class="muted">RECORDED NET P/L</div><div class="metric">${pnl<0?'-':''}$${Math.abs(pnl).toFixed(2)}</div><div class="muted">Separate from process grade</div></div><div class="panel span8"><h2>Chart studies by week</h2><div class="chart">${weekCounts.map((n,i)=>`<div class="col" style="height:${Math.max(3,Math.min(100,n/20*100))}%" title="Week ${i+1}: ${n}/20"><span>${i+1}</span></div>`).join('')}</div><p class="muted" style="margin-top:25px">Weekly target: 20 pre-market charts (4 per day). Earlier written studies remain counted.</p></div><div class="panel span4"><h2>Review what matters</h2><div class="item"><b>Followed plan</b><div class="metric">${trades.length?Math.round(trades.filter(t=>t.plan==='yes').length/trades.length*100):0}%</div><div class="muted">Of logged trades</div></div><div class="item" style="margin-top:9px"><b>Studied setups</b><div class="metric">${data.studies.filter(s=>s.source!=='premarket'||!!s.image).length}</div></div></div><div class="panel span12"><h2>Historical daily grades</h2><div class="cardlist">${used.slice().reverse().map(d=>`<div class="item row"><span>${d} · ${completed(d)?'Process complete':'In progress'}</span><b>${grade(score(d))} · ${score(d)}/100</b></div>`).join('')||'<div class="empty">No days recorded yet.</div>'}</div></div></div>`}

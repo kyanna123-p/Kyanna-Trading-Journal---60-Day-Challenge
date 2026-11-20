@@ -405,6 +405,25 @@ window.studyAnswer=n=>{if(answered!==null)return;answered=n;if(n===correctAnswer
 window.studyNext=()=>{idx++;answered=null;if(idx>=order.length)section='done';else prepareQuestion();renderCenter()};
 window.TradingPatternLibrary={lessons,diagram,classification,formationConfirm,formationBias,studyExtras};
 if(typeof renderResources!=='function')return;
+/* Bring progress from the standalone study page back into the existing cloud-backed journal.
+   This runs only on the main app; the standalone page cannot upload by itself. */
+try{
+ const key='tradecraftMasteryProgress:v1';
+ const local=JSON.parse(localStorage.getItem(key)||'{}');
+ const current=(data.settings||{}).masteryProgress||{};
+ if((current.updatedAt||'')>(local.updatedAt||'')){
+  localStorage.setItem(key,JSON.stringify(current));
+ }else if(local.updatedAt&&(local.updatedAt||'')>(current.updatedAt||'')){
+  data.settings=data.settings||{};
+  data.settings.masteryProgress=local;
+  save();
+ }
+ if(localStorage.getItem('tradecraftMasteryPendingSync')){
+  localStorage.removeItem('tradecraftMasteryPendingSync');
+  if(!local.updatedAt||(local.updatedAt||'')<=(current.updatedAt||''))save();
+ }
+}catch(e){console.warn('Mastery progress sync deferred',e)}
+
 const previous=renderResources;
 renderResources=function(){previous();const el=document.getElementById('resources');el.insertAdjacentHTML('beforeend','<div id="technicalStudyCenter"></div>');renderCenter()};
 renderResources();

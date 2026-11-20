@@ -50,7 +50,7 @@ function saveProgress(){
   }
  }catch(e){console.warn('Mastery progress could not be saved',e)}
 }
-const state={view:'reference',kind:'concept',category:'all',search:'',deck:[],cursor:0,flipped:false,quiz:[],quizCursor:0,answer:null,score:0,misses:[],round:10,quizDone:false};
+const state={view:'reference',kind:'concept',category:'all',search:'',page:1,deck:[],cursor:0,flipped:false,quiz:[],quizCursor:0,answer:null,score:0,misses:[],round:10,quizDone:false};
 function availableGroups(){return state.kind==='concept'?chapters:patternGroups}
 function availableItems(){return state.kind==='concept'?conceptual:visual}
 function filtered(){const term=state.search.toLowerCase().trim();return availableItems().filter(x=>(state.category==='all'||x.section===state.category)&&(!term||(x.title+' '+x.category+' '+(x.explanation||'')+' '+(x.description||'')+' '+(x.interpretation||'')).toLowerCase().includes(term)))}
@@ -97,8 +97,11 @@ function refItem(item){
  '<div class="tm-ref-actions"><button type="button" class="tm-outline" data-action="mark:'+item.id+'">'+(marked?'✓ Studied · Undo':'Mark as studied')+'</button></div></article>';
 }
 function referenceView(){
- let items=filtered();
- return filters()+'<div class="tm-reference-grid">'+(items.length?items.map(refItem).join(''):'<p class="tm-empty">No lessons match your filters.</p>')+'</div>';
+ const full=filtered(),pageSize=12,pageCount=Math.max(1,Math.ceil(full.length/pageSize));
+ state.page=Math.min(pageCount,Math.max(1,state.page));
+ const offset=(state.page-1)*pageSize,items=full.slice(offset,offset+pageSize);
+ const pager=full.length>pageSize?'<div class="tm-card-actions"><button type="button" class="tm-outline" data-action="refPrev" '+(state.page===1?'disabled':'')+'>Previous page</button><span class="tm-paging">Page '+state.page+' / '+pageCount+' · '+full.length+' references</span><button type="button" class="tm-outline" data-action="refNext" '+(state.page===pageCount?'disabled':'')+'>Next page</button></div>':'';
+ return filters()+'<div class="tm-reference-grid">'+(items.length?items.map(refItem).join(''):'<p class="tm-empty">No lessons match your filters.</p>')+'</div>'+pager;
 }
 function shuffle(xs){const a=xs.slice();for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function createDeck(){state.deck=shuffle(filtered());state.cursor=0;state.flipped=false}
@@ -172,15 +175,16 @@ function render(){
  const h=header()+(state.view==='reference'?referenceView():state.view==='cards'?cardsView():state.view==='quiz'?quizView():auditView());
  host.innerHTML=h;
 }
-function changeView(view){state.view=view;state.search='';state.category='all';choiceCache=null;if(view==='cards')createDeck();if(view==='quiz'){state.quiz=[];state.quizDone=false}render()}
-function changeKind(kind){state.kind=kind;state.category='all';state.search='';choiceCache=null;state.quiz=[];state.quizDone=false;if(state.view==='cards')createDeck();render()}
+function changeView(view){state.view=view;state.search='';state.category='all';state.page=1;choiceCache=null;if(view==='cards')createDeck();if(view==='quiz'){state.quiz=[];state.quizDone=false}render()}
+function changeKind(kind){state.kind=kind;state.category='all';state.search='';state.page=1;choiceCache=null;state.quiz=[];state.quizDone=false;if(state.view==='cards')createDeck();render()}
 host.addEventListener('click',e=>{
  const a=e.target.closest('[data-action]');if(!a)return;
  const cmd=a.dataset.action||'';
  if(cmd.startsWith('view:'))return changeView(cmd.split(':')[1]);
  if(cmd.startsWith('kind:'))return changeKind(cmd.split(':')[1]);
- if(cmd.startsWith('category:')){state.category=cmd.slice(9);choiceCache=null;state.quiz=[];if(state.view==='cards')createDeck();return render()}
+ if(cmd.startsWith('category:')){state.category=cmd.slice(9);state.page=1;choiceCache=null;state.quiz=[];if(state.view==='cards')createDeck();return render()}
  if(cmd.startsWith('mark:'))return mark(cmd.slice(5));
+ if(cmd==='refNext'||cmd==='refPrev'){state.page+=(cmd==='refNext'?1:-1);return render()}
  if(cmd==='flip'){state.flipped=!state.flipped;return render()}
  if(cmd==='next'||cmd==='prev'){state.cursor=Math.min(state.deck.length-1,Math.max(0,state.cursor+(cmd==='next'?1:-1)));state.flipped=false;return render()}
  if(cmd==='reshuffle'){createDeck();return render()}
@@ -195,7 +199,7 @@ host.addEventListener('click',e=>{
 });
 host.addEventListener('input',e=>{
  if(e.target.id!=='tmSearch')return;
- const v=e.target.value;state.search=v;choiceCache=null;state.quiz=[];if(state.view==='cards')createDeck();
+ const v=e.target.value;state.search=v;state.page=1;choiceCache=null;state.quiz=[];if(state.view==='cards')createDeck();
  const start=e.target.selectionStart;
  render();
  const now=document.getElementById('tmSearch');if(now){now.focus();now.setSelectionRange(start,start)}

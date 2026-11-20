@@ -48,8 +48,63 @@ function workflowCalendar(){
  let skipped=exclusions.map(x=>'<span class="pill">'+fmt(x.date)+' · '+esc(x.reason)+'</span>').join('');
  $('calendar').innerHTML='<div class="panel"><div class="row"><div><h2>60-Day Challenge Calendar</h2><p>Day 1: '+fmt(days[0])+' · Day 60: '+fmt(days[59])+' · '+calendarScheduleTitle()+'</p></div><button class="btn secondary small" onclick="go(\'settings\')">Edit trading calendar</button></div><p class="muted">Full closures do not count. Early-close sessions still count.</p><div class="calendar-grid">'+rows+'</div><div style="margin-top:14px"><h3>Excluded non-trading dates ('+exclusions.length+')</h3><div class="actions">'+(skipped||'<span class="muted">None in this period</span>')+'</div><p class="muted">The NYSE calendar is exchange-verified for 2026–2028; other instruments may use different sessions.</p></div></div>';
 }
+
+function workflowNightBefore(){
+ const tickers=planDay().tickers;
+ let total=tickers.reduce((n,t)=>n+(t.setups||[]).length,0);
+ let html='<div class="panel" style="margin-bottom:12px"><div class="row"><div><h2>1 · Night Before · '+esc(date)+'</h2><p>Prepare a watchlist and as many possible events per symbol as needed. The next stages reuse these plans.</p></div><button class="btn" onclick="optionAddTicker()">+ Add symbol</button></div><div class="actions"><span class="pill">'+tickers.length+' symbols</span><span class="pill">'+total+' setups</span></div></div>';
+ tickers.forEach(t=>{
+ html+='<div class="panel" style="margin-bottom:12px"><div class="row"><h2>'+esc(t.symbol)+' · '+t.setups.length+' setups</h2><div class="actions"><button class="btn small" onclick="optionAddSetup(\''+t.id+'\')">+ Setup</button><button class="btn danger small" onclick="optionRemoveTicker(\''+t.id+'\')">Remove</button></div></div>';
+ html+='<div class="field" style="max-width:260px"><label>Instrument</label>'+optionSelect(['Stocks','Options','Futures','Forex','Crypto','Other'],t.instrument||'Options',"optionEditTicker('"+t.id+"','instrument',this.value);renderOptions()")+'</div><div class="inline2">';
+ html+=optionInput('Weekly zones',t.weekly,"optionEditTicker('"+t.id+"','weekly',this.value)",'Weekly support / resistance');
+ html+=optionInput('Daily zones',t.daily,"optionEditTicker('"+t.id+"','daily',this.value)",'Daily support / resistance');
+ html+=optionInput('Nearby moving averages',t.mas,"optionEditTicker('"+t.id+"','mas',this.value)",'10, 20, 50, 200 as relevant');
+ html+=optionInput('Higher-timeframe context',t.context,"optionEditTicker('"+t.id+"','context',this.value)",'Trend / chop / bias');
+ html+='</div>'+planChartHtml(t);
+ t.setups.forEach((z,i)=>{
+ const args="'"+t.id+"','"+z.id+"'";
+ html+='<div class="item" style="margin:12px 0"><div class="row"><h3>Setup '+(i+1)+' · '+esc(z.play)+'</h3><button class="btn danger small" onclick="optionRemove('+args+')">Remove setup</button></div><div class="inline2">';
+ html+='<div class="field"><label>Event</label>'+optionSelect(optionPlays,z.play,"optionEditSetup("+args+",'play',this.value)")+'</div>';
+ html+='<div class="field"><label>Direction</label>'+optionSelect((t.instrument||'Options')==='Options'?['Call','Put']:['Long','Short'],z.direction,"optionEditSetup("+args+",'direction',this.value)")+'</div>';
+ html+=optionInput('At which zone / MA?',z.zone,"optionEditSetup("+args+",'zone',this.value)",'Specific location');
+ html+='<div class="field"><label>Execution timeframe</label>'+optionSelect(['2m','3m','5m','15m','1h'],z.timeframe,"optionEditSetup("+args+",'timeframe',this.value)")+'</div>';
+ html+=optionInput('Confirmation required',z.confirmation,"optionEditSetup("+args+",'confirmation',this.value)",'Conditions that validate the setup');
+ html+=optionInput('Planned entry',z.entry,"optionEditSetup("+args+",'entry',this.value)",'Trigger / price');
+ html+=optionInput('Stop / invalidation',z.sl,"optionEditSetup("+args+",'sl',this.value)");
+ html+=optionInput('Targets / exit plan',z.tps,"optionEditSetup("+args+",'tps',this.value)");
+ html+='</div></div>';
+ });
+ html+='</div>';
+ });
+ if(!tickers.length)html+='<div class="panel"><p class="empty">No watchlist built. Start with a symbol and add one or more potential events.</p></div>';
+ html+='<div class="panel"><div class="row"><p>Saved plans carry into premarket and execution.</p><button class="btn secondary" onclick="go(\'daily\')">Next: Premarket check</button></div></div>';
+ $('options').innerHTML=html;
+}
+function workflowPremarket(){
+ __stageBasePremarket();
+ const tickers=planDay().tickers;
+ let html='<div class="panel" style="margin-top:12px"><h2>Verify planned setups</h2><p>Approve, keep watching, skip, or invalidate each planned event before the market opens.</p>';
+ if(!tickers.length)html+='<p class="muted">No watchlist for this session. <button class="btn secondary small" onclick="go(\'options\')">Build night-before plan</button></p>';
+ tickers.forEach(t=>{
+ html+='<h3>'+esc(t.symbol)+' · '+esc(t.instrument||'Options')+'</h3>';
+ (t.setups||[]).forEach(z=>{
+ const args="'"+t.id+"','"+z.id+"'";
+ html+='<div class="item" style="margin:10px 0"><div class="row"><div><b>'+esc(z.play)+' · '+esc(z.direction)+'</b><p>'+esc(z.zone||'Level unmarked')+' · '+esc(z.confirmation||'Confirmation not specified')+'</p></div><span class="pill">'+esc(z.status||'Watching')+'</span></div><div class="inline2"><div class="field"><label>Premarket decision</label>'+optionSelect(['Watching','Premarket approved','Invalidated','Skipped'],z.status,"workflowOptionSet("+args+",'status',this.value)")+'</div>';
+ if((t.instrument||'Options')==='Options'){
+ html+=optionInput('Option expiration (optional)',z.expiry,"workflowOptionSet("+args+",'expiry',this.value)",'YYYY-MM-DD','date');
+ html+=optionInput('Strike (optional)',z.strike,"workflowOptionSet("+args+",'strike',this.value)",'','number');
+ }
+ html+=optionInput('Size / contracts (optional)',z.contracts,"workflowOptionSet("+args+",'contracts',this.value)",'','number');
+ html+='</div></div>';
+ });
+ });
+ html+='</div>';
+ $('daily').innerHTML+=html;
+}
+const __stageBasePremarket=renderDaily;
+
 const __stageOriginalReview=renderReport;
-nav=workflowNav;renderTrades=workflowExecution;renderReport=workflowReview;renderCalendar=workflowCalendar;
+nav=workflowNav;renderOptions=workflowNightBefore;renderDaily=workflowPremarket;renderTrades=workflowExecution;renderReport=workflowReview;renderCalendar=workflowCalendar;
 const __stageBaseRender=render;
 render=function(){calendarAdoptCloudSettings();__stageBaseRender()};
 render();

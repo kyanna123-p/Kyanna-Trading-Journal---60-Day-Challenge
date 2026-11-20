@@ -1,6 +1,18 @@
 function wfTickers(d){return (data.optionsPlans&&data.optionsPlans[d]&&data.optionsPlans[d].tickers)||[]}
 function wfSetups(d){return wfTickers(d).flatMap(t=>(t.setups||[]).map(s=>({symbol:t.symbol,instrument:t.instrument||'Options',setup:s})))}
 function wfUpdate(k,v){const r=rec();r.workflow=r.workflow||{};r.workflow[k]=v;save();render()}
+const todayFocusDescriptions={
+ 'Edge':'Only going for A+ / strong setups',
+ 'Execution':'Following my rules with discipline and precision',
+ 'Opportunity':'Reading market conditions',
+ 'Risk':'Stop Loss Execution',
+ 'Mental Fortitude':'Mental/Emotional health'
+};
+function todayFocusDropdown(selected){
+ return '<div class="field"><label for="todayFocusSelect">Select today\'s focus</label><select id="todayFocusSelect" onchange="wfFocus(this.value)"><option value="">Choose a focus</option>'+
+ Object.entries(todayFocusDescriptions).map(([name,desc])=>'<option value="'+esc(name)+'" '+(selected===name?'selected':'')+'>'+esc(name+' — '+desc)+'</option>').join('')+'</select></div>'+
+ (todayFocusDescriptions[selected]?'<p class="muted" style="margin:6px 0 12px"><b>'+esc(selected)+':</b> '+esc(todayFocusDescriptions[selected])+'</p>':'');
+}
 function wfFocus(k){rec().focus=k;save();render()}
 function wfChecks(d){const r=data.daily[d]||{},w=r.workflow||{},checks=r.checks||{},qs=['catalysts','zones','prepared','market','review'];return {plan:wfSetups(d).length>0,items:qs.map(k=>!!w[k]),health:[0,1,2].map(i=>!!checks['health'+i]),grades:categories.map(k=>r.grades&&r.grades[k]).filter(x=>x!==undefined&&x!=='')}}
 function wfScore(d){const r=data.daily[d];if(!r||!r.workflow)return __previousScore(d);const c=wfChecks(d),prep=c.items.slice(0,3).filter(Boolean).length;let gradeTotal=c.grades.length?c.grades.reduce((a,b)=>a+Number(b),0)/c.grades.length:0;return Math.round((c.plan?15:0)+prep/3*20+(c.items[3]?15:0)+(c.items[4]?15:0)+c.health.filter(Boolean).length/3*15+gradeTotal/4*20)}
@@ -26,7 +38,7 @@ function newRenderDashboard(){
  ${plans.length?'<div class="cardlist">'+plans.map(p=>`<div class="item"><div class="row"><b>${esc(p.symbol)} · ${esc(p.setup.play||'Event')}</b><span class="tag">${esc(p.setup.status||'Watching')}</span></div><div class="muted">${esc(p.instrument)} · ${esc(p.setup.direction)} · ${esc(p.setup.zone||'Location not marked')}</div></div>`).join('')+'</div>':'<div class="empty">No setups planned for this session. Start with your night-before watchlist.</div>'}
  ${wfSetups(date).length>8?`<p class="muted">Showing 8 of ${stats.total} setups. Open planner to see all.</p>`:''}</div>
  <div class="panel span6"><h2>Today's Focus & Readiness</h2>
- <p><b>Focus:</b> ${esc(r.focus||'Not chosen')} ${(r.notes.focusDetail||r.focusNote)?'· '+esc(r.notes.focusDetail||r.focusNote):''}</p>
+ <p><b>Focus:</b> ${esc(r.focus||'Not chosen')}${todayFocusDescriptions[r.focus]?' — '+esc(todayFocusDescriptions[r.focus]):''} ${(r.notes.focusDetail||r.focusNote)?'· '+esc(r.notes.focusDetail||r.focusNote):''}</p>
  <p><b>Mindset:</b> ${esc(r.notes.mindsetStatus||'Not checked')}</p>
  <p><b>Health:</b> ${[0,1,2].filter(i=>r.checks['health'+i]).length}/3 reminders completed</p>
  <p><b>Process score:</b> ${sc}/100 · <b>Completed challenge days:</b> ${completedCount}/60</p>
@@ -40,7 +52,7 @@ function newRenderDaily(){
  $('daily').innerHTML=`<div class="grid">
  <div class="panel span12"><div class="row"><div><h2>2 · Premarket · ${esc(date)}</h2><p style="margin:4px 0">Recheck planned setups, Today's Focus, health and mindset before the session. No duplicate entry.</p></div><button class="btn" onclick="go('options')">Open trade planner</button></div></div>
  <div class="panel span6"><h2>2 · Premarket recheck</h2><div class="light-inner">${wfToggle('catalysts')}${wfToggle('zones')}${wfToggle('prepared')}</div>${field('Catalyst / premarket note (optional)','catalysts',r.notes.catalysts||'','textarea')}</div>
- <div class="panel span6"><h2>Today's Focus</h2><div class="constraint-grid">${categories.map(c=>`<button class="choice ${r.focus===c?'chosen':''}" onclick="wfFocus('${c}')">${c}</button>`).join('')}</div>${field('Today’s focus (optional note)','focusDetail',r.notes.focusDetail||r.focusNote||'','textarea')}
+ <div class="panel span6"><h2>Today's Focus</h2>${todayFocusDropdown(r.focus)}${field('Today’s focus (optional note)','focusDetail',r.notes.focusDetail||r.focusNote||'','textarea')}
  <h3>Mindset check-in</h3><div class="field"><label>How ready do I feel?</label><select onchange="note('mindsetStatus',this.value)">${['','Focused','Calm','Distracted','Anxious','Tired'].map(v=>`<option value="${v}" ${mindset===v?'selected':''}>${v||'Select'}</option>`).join('')}</select></div></div>
  <div class="panel span6"><h2>Health reminders</h2><div class="light-inner">${checks('health')}</div><p class="muted">These are recorded once a day and retained in your review history.</p></div>
  </div>`;

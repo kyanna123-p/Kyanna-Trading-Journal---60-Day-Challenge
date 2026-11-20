@@ -220,7 +220,7 @@ function formationDiagram(name,hideName=false){
  const pts=f.p.map(p=>p.join(',')).join(' ');
  const breakout=f.p[f.p.length-1],prior=f.p[f.p.length-2];
  const color=f.bias==='bull'?'#34dba7':f.bias==='bear'?'#fa7185':'#d0bcff';
- return '<svg viewBox="0 0 340 184" role="img" aria-label="'+(hideName?'Identify this chart formation':name)+'" style="display:block;width:100%;max-width:480px;background:rgba(10,7,24,.50);border-radius:12px"><rect x="3" y="3" width="334" height="178" rx="11" fill="none" stroke="rgba(177,129,243,.22)"/>'+grid+lines+'<polyline points="'+pts+'" stroke="#d8d4f5" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round" fill="none"/><line x1="'+prior[0]+'" y1="'+prior[1]+'" x2="'+breakout[0]+'" y2="'+breakout[1]+'" stroke="'+color+'" stroke-width="4" stroke-linecap="round"/><circle cx="'+breakout[0]+'" cy="'+breakout[1]+'" r="4" fill="'+color+'"/><text x="14" y="175" fill="#f1bd56" font-size="10">'+f.tag+'</text></svg>';
+ return '<svg viewBox="0 0 340 184" role="img" aria-label="'+(hideName?'Identify this chart formation':name)+'" style="display:block;width:100%;max-width:480px;background:rgba(10,7,24,.50);border-radius:12px"><rect x="3" y="3" width="334" height="178" rx="11" fill="none" stroke="rgba(177,129,243,.22)"/>'+grid+lines+'<polyline points="'+pts+'" stroke="#d8d4f5" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round" fill="none"/><line x1="'+prior[0]+'" y1="'+prior[1]+'" x2="'+breakout[0]+'" y2="'+breakout[1]+'" stroke="'+color+'" stroke-width="4" stroke-linecap="round"/><circle cx="'+breakout[0]+'" cy="'+breakout[1]+'" r="4" fill="'+color+'"/><text x="14" y="175" fill="#f1bd56" font-size="10">'+(hideName?'':f.tag)+'</text></svg>';
 }
 
 Object.assign(shapes,{

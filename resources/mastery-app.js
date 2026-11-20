@@ -25,12 +25,31 @@ const visual=patternGroups.flatMap(g=>g.entries);
 const all=conceptual.concat(visual);
 const total=all.length;
 const storageKey='tradecraftMasteryProgress:v1';
-function loadProgress(){try{
- const a=JSON.parse(localStorage.getItem(storageKey)||'{}');
- return a&&typeof a==='object'?{studied:a.studied&&typeof a.studied==='object'?a.studied:{},bestQuiz:a.bestQuiz||null}:{studied:{},bestQuiz:null};
-}catch(e){return{studied:{},bestQuiz:null};}}
+function loadProgress(){
+ try{
+  const local=JSON.parse(localStorage.getItem(storageKey)||'{}');
+  const journal=JSON.parse(localStorage.getItem('tradecraft60')||'{}');
+  const cloud=journal?.settings?.masteryProgress||{};
+  const a=(cloud.updatedAt||'')>(local.updatedAt||'')?cloud:local;
+  return a&&typeof a==='object'?{studied:a.studied&&typeof a.studied==='object'?a.studied:{},bestQuiz:a.bestQuiz||null,updatedAt:a.updatedAt||''}:{studied:{},bestQuiz:null,updatedAt:''};
+ }catch(e){return{studied:{},bestQuiz:null,updatedAt:''};}
+}
 const progress=loadProgress();
-function saveProgress(){try{localStorage.setItem(storageKey,JSON.stringify(progress))}catch(e){console.warn('Mastery progress could not be saved',e)}}
+function saveProgress(){
+ try{
+  progress.updatedAt=new Date().toISOString();
+  localStorage.setItem(storageKey,JSON.stringify(progress));
+  // Reuse the existing journal snapshot so cloud backups can include learning progress.
+  // The dashboard's existing autosave resumes when the user returns to the main app.
+  const journal=JSON.parse(localStorage.getItem('tradecraft60')||'null');
+  if(journal&&typeof journal==='object'){
+   journal.settings=journal.settings||{};
+   journal.settings.masteryProgress=progress;
+   localStorage.setItem('tradecraft60',JSON.stringify(journal));
+   localStorage.setItem('tradecraftMasteryPendingSync','1');
+  }
+ }catch(e){console.warn('Mastery progress could not be saved',e)}
+}
 const state={view:'reference',kind:'concept',category:'all',search:'',deck:[],cursor:0,flipped:false,quiz:[],quizCursor:0,answer:null,score:0,misses:[],round:10,quizDone:false};
 function availableGroups(){return state.kind==='concept'?chapters:patternGroups}
 function availableItems(){return state.kind==='concept'?conceptual:visual}
@@ -47,7 +66,7 @@ function compactHeader(){
  return '<div class="tm-summary"><div><h2>Self-paced study library</h2><p>Original study-guide descriptions and separate schematic pattern references. No imposed schedule.</p></div>'+
  '<div class="tm-counts"><b>'+completedCount(all)+' / '+total+'</b><span>studied across library</span></div></div>'+
  '<div class="tm-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><span style="width:'+pct+'%"></span></div>'+
- '<p class="tm-muted">'+count+' / '+availableItems().length+' '+(state.kind==='concept'?'concepts':'pattern references')+' reviewed · '+current.length+' currently displayed · Progress saved in this browser.</p>';
+ '<p class="tm-muted">'+count+' / '+availableItems().length+' '+(state.kind==='concept'?'concepts':'pattern references')+' reviewed · '+current.length+' currently displayed · Progress saved locally; existing cloud sync can pick it up when you return to the main app.</p>';
 }
 function button(text,action,active){return '<button type="button" class="tm-tab'+(active?' is-active':'')+'" data-action="'+action+'">'+label(text)+'</button>'}
 function header(){

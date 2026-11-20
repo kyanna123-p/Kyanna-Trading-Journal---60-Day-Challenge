@@ -403,6 +403,8 @@ window.studyStart=(i,count=10)=>{
 };
 window.studyAnswer=n=>{if(answered!==null)return;answered=n;if(n===correctAnswer)score++;renderCenter()};
 window.studyNext=()=>{idx++;answered=null;if(idx>=order.length)section='done';else prepareQuestion();renderCenter()};
+window.TradingPatternLibrary={lessons,diagram,classification,formationConfirm,formationBias,studyExtras};
+if(typeof renderResources!=='function')return;
 const previous=renderResources;
 renderResources=function(){previous();const el=document.getElementById('resources');el.insertAdjacentHTML('beforeend','<div id="technicalStudyCenter"></div>');renderCenter()};
 renderResources();

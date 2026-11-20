@@ -22,7 +22,7 @@ d.tickers.map(t=>'<div class="panel" style="margin-bottom:12px"><div class="row"
 optionInput('Weekly zones',t.weekly,"optionEditTicker('"+t.id+"','weekly',this.value)",'Nearby weekly support / resistance')+
 optionInput('Daily zones',t.daily,"optionEditTicker('"+t.id+"','daily',this.value)",'Nearby daily support / resistance')+
 optionInput('Nearby MAs',t.mas,"optionEditTicker('"+t.id+"','mas',this.value)",'Daily / weekly 10, 20, 50, 200')+
-optionInput('Context / bias',t.context,"optionEditTicker('"+t.id+"','context',this.value)",'Trend, chop, proximity')+'</div>'+
+optionInput('Context / bias',t.context,"optionEditTicker('"+t.id+"','context',this.value)",'Trend, chop, proximity')+'</div>'+planChartHtml(t)+
 t.setups.map((s,i)=>'<div class="item" style="margin:12px 0"><div class="row"><h3>Setup '+(i+1)+' · '+esc(s.play)+'</h3><button class="btn danger small" onclick="optionRemove(\''+t.id+'\',\''+s.id+'\')">Remove</button></div><div class="inline2"><div class="field"><label>Play / event</label>'+optionSelect(optionPlays,s.play,"optionEditSetup('"+t.id+"','"+s.id+"','play',this.value)")+'</div><div class="field"><label>Trade direction</label>'+optionSelect((t.instrument||'Options')==='Options'?['Call','Put']:['Long','Short'],s.direction,"optionEditSetup('"+t.id+"','"+s.id+"','direction',this.value)")+'</div>'+
 optionInput('Location: zone / MA',s.zone,"optionEditSetup('"+t.id+"','"+s.id+"','zone',this.value)",'At or near which level?')+
 '<div class="field"><label>Execution timeframe</label>'+optionSelect(['2m','3m','5m','15m','1h'],s.timeframe,"optionEditSetup('"+t.id+"','"+s.id+"','timeframe',this.value)")+'</div>'+
@@ -43,3 +43,7 @@ optionInput('Realized P/L ($)',s.pnl,"optionEditSetup('"+t.id+"','"+s.id+"','pnl
 optionInput('Optional lesson',s.note,"optionEditSetup('"+t.id+"','"+s.id+"','note',this.value)")+'</div></div>').join('')+'</div>').join('')+
 '<div class="panel"><h2>Post-market review</h2><p>Health reminders, Today\'s Focus, mindset, and the four-constraint report card remain in Daily Routine and Report Card. They are recorded once per day, not per setup.</p><div class="actions"><button class="btn secondary" onclick="go(\'daily\')">Daily health / focus</button><button class="btn secondary" onclick="go(\'report\')">Mindset / report card</button></div></div>';
 }
+
+function planChartFor(t){return data.studies.find(x=>x.source==='planner'&&x.date===date&&x.market===t.symbol)}
+function planChartHtml(t){const chart=planChartFor(t);return `<div class="field"><label>Premarket chart study (optional · counts toward weekly study goal)</label><input id="planImage-${t.id}" type="file" accept="image/*" onchange="planSaveChart('${t.id}')"></div>${chart&&chart.image?`<img class="photo" src="${esc(chart.image)}" alt="Saved ${esc(t.symbol)} chart" loading="lazy">`:''}`}
+async function planSaveChart(tid){const t=planTicker(tid);if(!t)return;try{const img=await imageFile('planImage-'+tid);if(!img)return;const chart=planChartFor(t);if(chart){chart.image=img}else{data.studies.unshift({id:planId(),source:'planner',date,market:t.symbol,type:'Premarket plan chart',image:img})}save();renderOptions()}catch(e){alert('Could not save chart. Try a smaller image.')}}

@@ -19,8 +19,8 @@ function newRenderDashboard(){
  <div class="panel span12"><h2>Daily workflow · ${esc(date)}</h2><div class="grid">
  <div class="span3">${wfStage('1 · Night Before','Build watchlist, mark higher-timeframe zones and MAs, and plan multiple plays.','options',stats.total>0)}</div>
  <div class="span3">${wfStage('2 · Premarket','Recheck catalysts, zones, confirmation conditions and risk.','daily',w.catalysts&&w.zones&&w.prepared)}</div>
- <div class="span3">${wfStage('3 · Execution','Act only on confirmed setups; track entries, exits and stops.','options',w.market)}</div>
- <div class="span3">${wfStage('4 · Review','Record outcomes, rule adherence, health and mindset.','daily',w.review)}</div>
+ <div class="span3">${wfStage('3 · Execution','Act only on confirmed setups; track entries, exits and stops.','trades',w.market)}</div>
+ <div class="span3">${wfStage('4 · Review','Record outcomes, rule adherence, health and mindset.','report',w.review)}</div>
  </div></div>
  <div class="panel span6"><div class="row"><h2>Watchlist & setups</h2><button class="btn small secondary" onclick="go('options')">Manage</button></div>
  ${plans.length?'<div class="cardlist">'+plans.map(p=>`<div class="item"><div class="row"><b>${esc(p.symbol)} · ${esc(p.setup.play||'Event')}</b><span class="tag">${esc(p.setup.status||'Watching')}</span></div><div class="muted">${esc(p.instrument)} · ${esc(p.setup.direction)} · ${esc(p.setup.zone||'Location not marked')}</div></div>`).join('')+'</div>':'<div class="empty">No setups planned for this session. Start with your night-before watchlist.</div>'}
@@ -38,17 +38,12 @@ function newRenderDashboard(){
 function newRenderDaily(){
  const r=rec(),w=r.workflow||{},stats=wfQuickStats(),mindset=r.notes.mindsetStatus||'';
  $('daily').innerHTML=`<div class="grid">
- <div class="panel span12"><div class="row"><div><h2>Daily Routine · ${esc(date)}</h2><p style="margin:4px 0">Only one daily check-in. Your setup details live in the Trade Planner, so nothing needs to be entered twice.</p></div><button class="btn" onclick="go('options')">Open trade planner</button></div></div>
- <div class="panel span6"><h2>1 · Night-before execution plan</h2><p>${stats.tickers} symbols · ${stats.total} potential setups · ${stats.ready} approved</p><p>Map weekly/daily levels and moving averages, then define each possible event, confirmation, stop and targets.</p><button class="btn secondary" onclick="go('options')">${stats.total?'Review planned setups':'Build tomorrow’s watchlist'}</button></div>
+ <div class="panel span12"><div class="row"><div><h2>2 · Premarket · ${esc(date)}</h2><p style="margin:4px 0">Recheck planned setups, Today's Focus, health and mindset before the session. No duplicate entry.</p></div><button class="btn" onclick="go('options')">Open trade planner</button></div></div>
  <div class="panel span6"><h2>2 · Premarket recheck</h2><div class="light-inner">${wfToggle('catalysts')}${wfToggle('zones')}${wfToggle('prepared')}</div>${field('Catalyst / premarket note (optional)','catalysts',r.notes.catalysts||'','textarea')}</div>
  <div class="panel span6"><h2>Today's Focus</h2><div class="constraint-grid">${categories.map(c=>`<button class="choice ${r.focus===c?'chosen':''}" onclick="wfFocus('${c}')">${c}</button>`).join('')}</div>${field('Today’s focus (optional note)','focusDetail',r.notes.focusDetail||r.focusNote||'','textarea')}
  <h3>Mindset check-in</h3><div class="field"><label>How ready do I feel?</label><select onchange="note('mindsetStatus',this.value)">${['','Focused','Calm','Distracted','Anxious','Tired'].map(v=>`<option value="${v}" ${mindset===v?'selected':''}>${v||'Select'}</option>`).join('')}</select></div></div>
  <div class="panel span6"><h2>Health reminders</h2><div class="light-inner">${checks('health')}</div><p class="muted">These are recorded once a day and retained in your review history.</p></div>
- <div class="panel span6"><h2>3 · Market execution</h2><p>Monitor the planned setups. Confirm the event before entry, then track stop, targets, adds and exit using quick actions.</p><div class="light-inner">${wfToggle('market')}</div><button class="btn secondary" onclick="go('options')">Open live setups</button></div>
- <div class="panel span6"><h2>4 · Post-market review</h2><div class="light-inner">${wfToggle('review')}</div>
- ${field('One lesson (optional)','learned',r.notes.learned||'','textarea')}
- ${field('Next adjustment (optional)','changes',r.notes.changes||'','textarea')}
- <button class="btn" onclick="go('report')">Complete report card</button></div></div>`;
+ </div>`;
 }
 function newRenderReport(){
  const r=rec(),sc=score(date),pls=wfSetups(date),taken=pls.filter(p=>['Entered','Closed'].includes(p.setup.status)),pnl=pls.reduce((s,p)=>s+(Number(p.setup.pnl)||0),0),legacy=data.trades.filter(t=>t.date===date),oldPnl=legacy.reduce((a,t)=>a+(Number(t.pnl)||0),0);

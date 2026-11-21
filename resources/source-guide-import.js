@@ -307,7 +307,9 @@
     if(e.target.id==='originalChapter'){
       chapter=e.target.value;query='';
       const search=document.getElementById('originalSearch');if(search)search.value='';
-      updateNavigator();return;
+      const first=filteredItems()[0];
+      if(first)selectLesson(first.index);else updateNavigator();
+      return;
     }
     if(e.target.id==='originalLesson'&&e.target.value!==''){selectLesson(Number(e.target.value))}
   });

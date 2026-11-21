@@ -198,7 +198,13 @@
     const scope=navigationScope();
     const position=scope.findIndex(l=>l.index===current);
     const next=scope[position+by];
-    if(next)selectLesson(next.index);
+    if(next){
+      selectLesson(next.index);
+      const panel=document.getElementById('originalDetail');
+      if(panel && typeof panel.scrollIntoView==='function'){
+        panel.scrollIntoView({behavior:'auto',block:'start'});
+      }
+    }
   }
 
   async function assetURL(name) {

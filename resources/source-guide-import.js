@@ -10,7 +10,8 @@
   const DB_KEY = 'uploadedStudyGuide';
   const PROGRESS_KEY = 'tradecraftMasteryProgress:v1';
   let archive = null, source = null, basePath = '', current = 0, query = '',
-      pictureUrls = new Map(), viewVersion = 0, state = 'empty', lastError = '';
+      pictureUrls = new Map(), viewVersion = 0, state = 'empty', lastError = '',
+      selectedImage = 0, activeUrls = [], chapter = 'all';
 
   const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -77,7 +78,7 @@
         localStorage.setItem('tradecraft60', JSON.stringify(snapshot));
         localStorage.setItem('tradecraftMasteryPendingSync','1');
       }
-      showGuide();
+      updateNavigator(); updateStudyStatus();
     } catch (err) { report('Study progress could not be saved: '+err.message); }
   }
 
@@ -100,7 +101,7 @@
     if (parsed.lessons.some(l => typeof l.title!=='string' || typeof l.body!=='string' || typeof l.section!=='string')) throw new Error('The guide contains incomplete lesson metadata.');
     removeUrls(); archive=z;source=parsed;basePath=root;
     current=Math.max(0,parsed.lessons.findIndex(l => /^Bull 180\b/i.test(l.title)));
-    query='';state='loaded';lastError='';
+    selectedImage=0;activeUrls=[];chapter='all';query='';state='loaded';lastError='';
     if (persist) {
       try { await writeStored(file); }
       catch(err) { lastError='The images are available for this session, but this browser could not save the ZIP: '+err.message; }
@@ -135,35 +136,71 @@
   function filteredItems() {
     const value=query.trim().toLowerCase();
     return source.lessons.map((l,i)=>({...l,index:i})).filter(l=>
-      !value||(l.title+' '+l.section+' '+l.body+' '+(l.tags||[]).join(' ')).toLowerCase().includes(value));
+      (chapter==='all'||l.section===chapter)&&
+      (!value||(l.title+' '+l.section+' '+l.body+' '+(l.tags||[]).join(' ')).toLowerCase().includes(value)));
   }
   function showGuide() {
     if (!source) return;
-    const s=summaryCount();
+    const stats=summaryCount();
     target.innerHTML=
-      '<div class="original-banner"><div><span class="original-eyebrow">ORIGINAL LESSON DEPICTIONS · PRIVATE LIBRARY</span><h2>Learn directly from your source screenshots</h2>'+
-      '<p>Images are displayed exactly as supplied, with the lesson rules below. Your ZIP is saved in this browser, not published on the website.</p></div>'+
-      '<div class="original-counts"><b>'+s.unique+'</b> unique screenshots <span>'+s.refs+' lesson placements · '+s.lessons+' lessons · '+s.done+' reviewed</span></div></div>'+
+      '<section class="original-banner"><div><span class="original-eyebrow">TRADING MASTERY · ORIGINAL VISUALS</span>'+
+      '<h2>Visual lesson library</h2><p>One lesson and one picture at a time. Original diagrams remain unaltered.</p></div>'+
+      '<div class="original-counts"><b id="originalProgressNumber">'+stats.done+' / '+stats.lessons+'</b><span>Lessons reviewed</span></div></section>'+
       (lastError?'<p class="original-warning">'+escapeHTML(lastError)+'</p>':'')+
-      '<div class="original-toolbar"><label>Find a lesson<input type="search" id="originalSearch" placeholder="Bull 180, Elephant Bar, moving averages…" value="'+escapeHTML(query)+'"></label>'+
-      '<button type="button" class="original-secondary" data-original="replace">Import another ZIP</button>'+
-      '<button type="button" class="original-secondary" data-original="forget">Clear private guide</button>'+
-      '<a href="#masteryApp" class="original-secondary">Pattern quizzes and flashcards</a></div>'+
-      '<div class="original-grid"><aside class="original-directory" id="originalDirectory"></aside><div class="original-detail" id="originalDetail"></div></div>';
-    updateDirectory();
-    loadCurrentVisuals();
+      '<div class="original-toolbar">'+
+      '<label class="original-chapter-label">Chapter<select id="originalChapter" aria-label="Choose chapter"></select></label>'+
+      '<label class="original-lesson-label">Lesson<select id="originalLesson" aria-label="Choose lesson"></select></label>'+
+      '<label class="original-search-label">Search<input type="search" id="originalSearch" placeholder="Find a lesson…" value="'+escapeHTML(query)+'"></label>'+
+      '</div><div class="original-meta"><span id="originalLessonCount"></span>'+
+      '<div class="original-meta-actions"><button type="button" class="original-secondary" data-original="replace">Change ZIP</button>'+
+      '<button type="button" class="original-secondary original-remove" data-original="forget">Remove saved images</button></div></div>'+
+      '<div class="original-detail" id="originalDetail"></div>';
+    updateNavigator();loadCurrentVisuals();
   }
-  function updateDirectory() {
-    const el=document.getElementById('originalDirectory');
-    if(!el||!source)return;
-    const group={};filteredItems().forEach(l=>(group[l.section]??=[]).push(l));
-    el.innerHTML=Object.entries(group).map(([section,items])=>
-      '<div class="original-dirgroup"><h3>'+escapeHTML(section)+'</h3>'+
-      items.map(l=>'<button type="button" data-original="lesson:'+l.index+'" class="original-lesson '+(current===l.index?'current':'')+'">'+
-      escapeHTML(l.title)+
-      '<small>'+(l.images||[]).length+' original image'+((l.images||[]).length!==1?'s':'')+(studied(l.index)?' · ✓ Studied':'')+'</small></button>').join('')+'</div>').join('')||
-      '<p class="original-empty">No matching lessons.</p>';
+
+  function updateNavigator() {
+    if(!source)return;
+    const chapters=[...new Set(source.lessons.map(l=>l.section))];
+    const selector=document.getElementById('originalChapter');
+    if(selector)selector.innerHTML='<option value="all">All chapters</option>'+
+      chapters.map(name=>'<option value="'+escapeHTML(name)+'" '+(chapter===name?'selected':'')+'>'+escapeHTML(name)+'</option>').join('');
+    const items=filteredItems(),lessonSelect=document.getElementById('originalLesson');
+    if(lessonSelect) {
+      lessonSelect.innerHTML=
+        (items.some(l=>l.index===current)?'':'<option value="" selected>Choose from '+items.length+' matching lessons</option>')+
+        items.map(l=>'<option value="'+l.index+'" '+(l.index===current?'selected':'')+'>'+
+          String(l.index+1).padStart(2,'0')+' · '+escapeHTML(l.title)+(studied(l.index)?' ✓':'')+
+          '</option>').join('')+
+        (!items.length?'<option value="" selected>No matching lessons</option>':'');
+      lessonSelect.disabled=!items.length;
+    }
+    const summary=document.getElementById('originalLessonCount');
+    if(summary)summary.textContent=items.length+' lessons in view · '+source.lessons.length+' total';
   }
+
+  function updateStudyStatus() {
+    const progress=document.getElementById('originalProgressNumber');
+    if(progress)progress.textContent=summaryCount().done+' / '+source.lessons.length;
+    const mark=document.getElementById('originalStudyButton');
+    if(mark)mark.textContent=studied(current)?'✓ Reviewed · Undo':'Mark reviewed';
+  }
+
+  function navigationScope() {
+    const matches=filteredItems();
+    return matches.some(l=>l.index===current)?matches:source.lessons.map((l,index)=>({...l,index}));
+  }
+  function selectLesson(index) {
+    if (!Number.isInteger(index)||index<0||index>=source.lessons.length)return;
+    current=index;selectedImage=0;activeUrls=[];
+    updateNavigator();loadCurrentVisuals();
+  }
+  function stepLesson(by) {
+    const scope=navigationScope();
+    const position=scope.findIndex(l=>l.index===current);
+    const next=scope[position+by];
+    if(next)selectLesson(next.index);
+  }
+
   async function assetURL(name) {
     if (pictureUrls.has(name)) return pictureUrls.get(name);
     const z=archive.file(basePath+'assets/'+name);
@@ -171,36 +208,71 @@
     const blob=await z.async('blob');
     const url=URL.createObjectURL(blob);pictureUrls.set(name,url);return url;
   }
+
+  function updatePicture() {
+    const lesson=source?.lessons[current];
+    const names=lesson?.images||[];
+    if(!names.length||!activeUrls.length)return;
+    selectedImage=Math.max(0,Math.min(names.length-1,selectedImage));
+    const image=document.getElementById('originalHeroImage');
+    const count=document.getElementById('originalPhotoCount');
+    const full=document.getElementById('originalFullSize');
+    const prev=document.getElementById('originalPhotoPrev');
+    const next=document.getElementById('originalPhotoNext');
+    if(image) {image.src=activeUrls[selectedImage];image.alt=lesson.title+' · original depiction '+(selectedImage+1);}
+    if(count)count.textContent='Image '+(selectedImage+1)+' of '+names.length;
+    if(full)full.href=activeUrls[selectedImage];
+    if(prev)prev.disabled=selectedImage===0;
+    if(next)next.disabled=selectedImage===names.length-1;
+    target.querySelectorAll('[data-original^="image:"]').forEach(button=>{
+      const active=Number(button.dataset.original.slice(6))===selectedImage;
+      button.setAttribute('aria-pressed',String(active));
+      button.classList.toggle('is-selected',active);
+    });
+  }
+
   async function loadCurrentVisuals() {
     const index=current, req=++viewVersion;
     const lesson=source?.lessons[index];if(!lesson)return;
     const el=document.getElementById('originalDetail');if(!el)return;
-    const imgs=lesson.images||[];
-    el.innerHTML='<div class="original-detailhead"><span class="original-eyebrow">'+escapeHTML(lesson.section)+'</span><h3>'+escapeHTML(lesson.title)+'</h3></div>'+
-      '<div class="original-loading">Preparing '+imgs.length+' original depiction'+(imgs.length===1?'':'s')+'…</div>';
-    try {
-      const links=await Promise.all(imgs.map(assetURL));
-      if(req!==viewVersion || current!==index)return;
-      const visual=imgs.length?
-        '<section class="original-gallery"><h4>Original lesson depictions · '+imgs.length+'</h4>'+
-        imgs.map((name,i)=>
-          '<figure class="original-figure"><a href="'+links[i]+'" target="_blank" rel="noopener noreferrer" title="Open original image full size">'+
-          '<img src="'+links[i]+'" loading="lazy" alt="'+escapeHTML(lesson.title+' · original illustration '+(i+1))+'"></a>'+
-          '<figcaption><span>Original '+(i+1)+' / '+imgs.length+'</span><a href="'+links[i]+'" target="_blank" rel="noopener noreferrer">View full size</a></figcaption></figure>'
-        ).join('')+'</section>':
-        '<div class="original-warning">No original depiction was attached to this lesson. Its exact source text is kept below.</div>';
-      const warn=lesson.status==='needs-verification'?
-        '<div class="original-warning">Source verification required: the lesson notes flag a rule that should not be inferred from the picture alone.</div>':'';
-      el.innerHTML='<div class="original-detailhead"><span class="original-eyebrow">'+escapeHTML(lesson.section)+'</span><h3>'+escapeHTML(lesson.title)+'</h3>'+
-        '<div class="original-tags">'+(lesson.tags||[]).map(t=>'<span>'+escapeHTML(t)+'</span>').join('')+'</div></div>'+warn+visual+
-        '<section class="original-explanation"><h4>Source lesson notes</h4>'+cleanLessonMarkup(lesson.body)+'</section>'+
-        '<div class="original-actions"><div><button type="button" class="original-secondary" data-original="previous" '+(index===0?'disabled':'')+'>Previous</button>'+
-        '<button type="button" class="original-secondary" data-original="next" '+(index===source.lessons.length-1?'disabled':'')+'>Next lesson</button></div>'+
-        '<button type="button" class="original-primary" data-original="studied">'+(studied(index)?'✓ Reviewed · Undo':'Mark as reviewed')+'</button></div>';
+    const images=lesson.images||[];
+    el.innerHTML='<div class="original-loading">Loading this lesson’s images…</div>';
+    try{
+      const urls=await Promise.all(images.map(assetURL));
+      if(req!==viewVersion||current!==index)return;
+      activeUrls=urls;selectedImage=0;
+      const needsReview=lesson.status==='needs-verification'?
+        '<p class="original-warning">This source lesson has a rule flagged for verification. Do not infer missing conditions from the illustration.</p>':'';
+      const photo=images.length?
+        '<div class="original-gallery">'+
+          '<div class="original-photo-frame"><img id="originalHeroImage" src="'+urls[0]+'" alt="'+escapeHTML(lesson.title+' · original depiction 1')+'"></div>'+
+          '<div class="original-photo-controls"><div class="original-photo-step">'+
+          '<button type="button" class="original-secondary" id="originalPhotoPrev" data-original="imagePrev" disabled aria-label="Previous image">‹</button>'+
+          '<span id="originalPhotoCount">Image 1 of '+images.length+'</span>'+
+          '<button type="button" class="original-secondary" id="originalPhotoNext" data-original="imageNext" '+(images.length===1?'disabled':'')+' aria-label="Next image">›</button></div>'+
+          '<a class="original-zoom" id="originalFullSize" href="'+urls[0]+'" target="_blank" rel="noopener noreferrer">Open full-size image</a></div>'+
+          (images.length>1?'<div class="original-thumbnails" aria-label="Choose an image">'+images.map((name,i)=>
+            '<button type="button" class="original-thumb '+(i===0?'is-selected':'')+'" data-original="image:'+i+'" aria-pressed="'+(i===0)+'" aria-label="Show image '+(i+1)+' of '+images.length+'">'+
+            '<img src="'+urls[i]+'" alt="" loading="lazy"><small>'+(i+1)+'</small></button>').join('')+'</div>':'')+
+        '</div>':
+        '<div class="original-warning">This lesson has no original image in the supplied guide. The source notes remain available below.</div>';
+      const notes='<details class="original-notes"><summary>Read source lesson notes</summary>'+
+        '<div class="original-explanation">'+cleanLessonMarkup(lesson.body)+'</div></details>';
+      const scope=navigationScope(),pos=scope.findIndex(l=>l.index===index);
+      el.innerHTML='<div class="original-detailhead">'+
+        '<div><span class="original-eyebrow">'+escapeHTML(lesson.section)+'</span>'+
+        '<h3>'+escapeHTML(lesson.title)+'</h3>'+
+        '<span class="original-viewing">Lesson '+(index+1)+' of '+source.lessons.length+'</span></div>'+
+        '<button type="button" class="original-primary" id="originalStudyButton" data-original="studied">'+
+        (studied(index)?'✓ Reviewed · Undo':'Mark reviewed')+'</button></div>'+
+        needsReview+photo+notes+
+        '<div class="original-actions"><button type="button" class="original-secondary" data-original="previous" '+(pos<=0?'disabled':'')+'>‹ Previous lesson</button>'+
+        '<button type="button" class="original-secondary" data-original="next" '+(pos>=scope.length-1?'disabled':'')+'>Next lesson ›</button></div>';
     }catch(err){
-      if (req===viewVersion) el.innerHTML='<p class="original-warning">Could not load a depiction: '+escapeHTML(err.message)+'</p>';
+      if(req===viewVersion)el.innerHTML='<p class="original-warning">Could not load this illustration: '+escapeHTML(err.message)+'</p>';
     }
   }
+
   function emptyView(message) {
     target.innerHTML='<div class="original-banner"><div><span class="original-eyebrow">ORIGINAL LESSON DEPICTIONS</span><h2>Display the exact illustrations from your study guide</h2>'+
       '<p>Load <b>trading_mastery_study_guide.zip</b> once on this device. The app will privately remember the original images and match them to all 37 lessons. Nothing is uploaded to the public website.</p></div></div>'+
@@ -216,20 +288,28 @@
   target.addEventListener('click',async e=>{
     const a=e.target.closest('[data-original]');if(!a)return;
     const cmd=a.dataset.original;
-    if(cmd==='replace'){emptyView('Choose your replacement study-guide ZIP.');return;}
+    if(cmd==='replace'){emptyView('Choose your replacement guide ZIP.');return;}
     if(cmd==='forget'){
-      if(!window.confirm('Remove the privately saved screenshot archive from this browser? Your studied markers are retained.'))return;
-      try{await deleteStored()}catch(err){lastError='Could not clear private images: '+err.message;}
+      if(!window.confirm('Remove the privately saved screenshot archive from this browser? Your study progress remains.'))return;
+      try{await deleteStored()}catch(err){lastError='Could not clear saved images: '+err.message;}
       removeUrls();archive=null;source=null;state='empty';emptyView(lastError);return;
     }
-    if(cmd.startsWith('lesson:')){current=Number(cmd.slice(7));updateDirectory();loadCurrentVisuals();return;}
-    if(cmd==='previous'||cmd==='next'){current=Math.min(source.lessons.length-1,Math.max(0,current+(cmd==='next'?1:-1)));updateDirectory();loadCurrentVisuals();return;}
+    if(cmd.startsWith('image:')){selectedImage=Number(cmd.slice(6));updatePicture();return;}
+    if(cmd==='imagePrev'||cmd==='imageNext'){selectedImage+=(cmd==='imageNext'?1:-1);updatePicture();return;}
+    if(cmd==='previous'||cmd==='next'){stepLesson(cmd==='next'?1:-1);return;}
     if(cmd==='studied')recordStudied();
   });
   target.addEventListener('input',e=>{
     if(e.target.id!=='originalSearch')return;
-    const node=e.target;query=node.value;
-    updateDirectory();
+    query=e.target.value;updateNavigator();
+  });
+  target.addEventListener('change',e=>{
+    if(e.target.id==='originalChapter'){
+      chapter=e.target.value;query='';
+      const search=document.getElementById('originalSearch');if(search)search.value='';
+      updateNavigator();return;
+    }
+    if(e.target.id==='originalLesson'&&e.target.value!==''){selectLesson(Number(e.target.value))}
   });
   target.addEventListener('change',async e=>{
     if(e.target.id!=='originalZipPicker')return;

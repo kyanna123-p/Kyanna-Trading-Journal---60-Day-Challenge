@@ -163,6 +163,7 @@ function checklistExecutionMarkup(tid,sid){
 function night(){
  const tickers=planDay().tickers,r=rec();
  let html='<div class="qj-head"><div><h2>Night prep · '+escaped(date)+'</h2><p>Build this session’s plan in advance. Mark your levels, zones and alerts. Each symbol can have multiple potential plays.</p></div></div>'+
+ checklistNightMarkup(r.focus)+
  '<div class="qj-add"><input id="quickNewSymbol" aria-label="Add symbol" placeholder="Ticker / symbol (AAPL, MNQ…)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();quickSymbol()}"><button class="btn" onclick="quickSymbol()">+ Add symbol</button></div>';
  if(!tickers.length)html+='<div class="qj-empty">Add your first symbol. You only need to enter details relevant to tomorrow.</div>';
  for(const t of tickers){
@@ -186,8 +187,7 @@ function night(){
  drop(cycleChoices,t.cycle||'',"quickUpdate('ticker','"+t.id+"','cycle',this.value,false)",'Daily cycle')+
  '</div></details></article>';
  }
- html+=checklistNightMarkup(r.focus)+
- '<div class="qj-next"><button class="btn" onclick="quickMark(\'quickNight\',\'pre\')">Done planning <span aria-hidden="true">→</span></button></div>';
+ html+='<div class="qj-next"><button class="btn" onclick="quickMark(\'quickNight\',\'pre\')">Done planning <span aria-hidden="true">→</span></button></div>';
  return html;
 }
 function premarket(){
@@ -258,10 +258,7 @@ function review(){
  '</div>'+
  '<label class="qj-field"><span>What went right / wrong? (optional)</span><textarea rows="2" placeholder="One sentence is enough" onchange="quickUpdate(\'day\',null,\'learned\',this.value,false)">'+escaped(r.notes.learned||'')+'</textarea></label>'+
  '<label class="qj-field"><span>What could I do better? (optional)</span><textarea rows="2" placeholder="One thing for next time" onchange="quickUpdate(\'day\',null,\'changes\',this.value,false)">'+escaped(r.notes.changes||'')+'</textarea></label>'+
- '<details class="qj-details"><summary>Post-market chart screenshot (optional)</summary><div class="qj-upload">'+
- '<input id="quickReviewImage" type="file" accept="image/*" onchange="quickSaveReviewChart()">'+
- (quickReviewChart()?.image?'<img src="'+escaped(quickReviewChart().image)+'" alt="Saved post-market chart" class="qj-review-img">':'')+
- '</div></details>'+
+ checklistScreenshot('quick-review','quickReviewImage','quickSaveReviewChart','Post-review screenshot')+
  '<details class="qj-details"><summary>Mindset report card · four constraints (optional)</summary><div class="qj-four">'+
  categories.map(k=>drop(['','0','1','2','3','4'],String(r.grades[k]??''),"quickReviewGrade('"+k+"',this.value)",k)).join('')+'</div></details>'+
  '<details class="qj-details"><summary>Health reminders (sleep, nutrition, movement)</summary><div class="qj-wellness">'+

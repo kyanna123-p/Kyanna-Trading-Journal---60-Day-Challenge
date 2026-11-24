@@ -92,3 +92,10 @@
  .qj-wellness{grid-template-columns:1fr}
 }
 @media(max-width:410px){.qj-two,.qj-three,.qj-four{grid-template-columns:1fr}.qj-actiongrid{gap:7px}.qj-row{align-items:start}}
+
+.qj-header-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.qj-today-link{background:transparent;border:1px solid #625483;color:#d9c8f3;font:600 11px system-ui;border-radius:8px;padding:6px 8px;cursor:pointer}
+.qj-today-link:hover{background:#3b3056}
+.qj-next{gap:9px;align-items:center;flex-wrap:wrap}
+.qj-next .btn.secondary{background:#27233e;color:#e8d9fb;border:1px solid #6c578b}
+@media(max-width:560px){.qj-header-actions{gap:5px}.qj-today-link{padding:5px;font-size:10px}.qj-next{justify-content:stretch}.qj-next .btn{flex:1 1 150px}}

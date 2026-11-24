@@ -1,0 +1,45 @@
+
+/* Compact learning hub and video training links */
+.learn-head{padding:16px 19px;margin-bottom:12px;border-radius:14px;background:linear-gradient(115deg,#29223f,#19263c);border:1px solid #584876}
+.learn-head h2{font-size:20px;margin:0 0 5px;color:#f0e4ff}
+.learn-head p{color:#bfbbd0;font-size:12px;margin:0}
+.learn-mainlinks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 15px}
+.learn-link{background:rgba(27,33,52,.9);border:1px solid #544977;border-radius:12px;padding:17px;display:flex;flex-direction:column;gap:4px;text-decoration:none}
+.learn-link:hover{border-color:#b99df5;background:#302844}
+.learn-link b{font-size:16px;color:#f1e1ff}
+.learn-link span{font-size:12px;color:#bbc2d1}
+.learn-video{background:linear-gradient(130deg,#1e233b,#1a1b33);border:1px solid #524767;border-radius:13px;padding:17px;margin-bottom:12px}
+.learn-videohead h3{font-size:17px;margin:0;color:#ead8ff}
+.learn-videohead p{font-size:12px;margin:3px 0 0;color:#b7bfce}
+.learn-trackchips{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 15px}
+.learn-trackchips span{border:1px solid #5f5376;border-radius:25px;padding:5px 9px;font-size:10px;color:#d2c4df;background:#29253f}
+.learn-video-layout{display:grid;grid-template-columns:minmax(200px,270px) minmax(0,1fr);gap:12px;align-items:start}
+.learn-video-list{padding:9px;border-radius:10px;border:1px solid #51486b;background:#151e32}
+.learn-track h4{margin:13px 8px 5px;font-size:10px;color:#c4aadf;text-transform:uppercase;letter-spacing:.6px}
+.learn-lesson{border:1px solid transparent;border-radius:9px;background:transparent;color:#f1eaf9;padding:10px;text-align:left;width:100%;display:flex;flex-direction:column;gap:3px;cursor:pointer}
+.learn-lesson.selected{background:#32294c;border-color:#8b71ae}
+.learn-lesson b{font-size:12px}
+.learn-lesson span{font-size:10px;color:#9fcfba}
+.learn-player{border-radius:12px;border:1px solid #534768;padding:13px;background:#141d30}
+.learn-player h4{margin:0 0 10px;color:#eee5f8;font-size:14px}
+.learn-frame{aspect-ratio:16/9;background:#080d1b;border-radius:9px;overflow:hidden}
+.learn-frame iframe{width:100%;height:100%;border:0}
+.learn-external{border:1px dashed #6b5b88;padding:20px;color:#cfd1e2;font-size:12px;border-radius:9px}
+.learn-external a{color:#d9b8ff}
+.learn-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+.learn-remove{background:none;border:0;color:#e3afbf;text-decoration:underline;font-size:11px;cursor:pointer}
+.learn-empty{padding:16px;border:1px dashed #645981;background:#211d35;border-radius:11px;color:#d4c9e5}
+.learn-empty b{font-size:13px}
+.learn-empty p{margin:6px 0 0;font-size:12px}
+.learn-add{margin:13px 0;border:1px solid #5c5273;border-radius:11px;padding:0 12px 13px;background:#24243d}
+.learn-add summary{padding:12px 0;cursor:pointer;font-weight:600;font-size:13px;color:#dfd0f5}
+.learn-fields{display:grid;grid-template-columns:1.1fr 1.4fr 1fr;gap:10px;margin:0 0 11px}
+.learn-fields label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:#c4b7d6}
+.learn-fields input,.learn-fields select{min-width:0;width:100%;height:40px;margin:0;padding:8px;border-radius:9px;border:1px solid #655778;background:#141d30;color:#f7f1ff;font:12px system-ui}
+.learn-fineprint{color:#aeb5c6;font-size:11px;margin:8px 0 0;line-height:1.6}
+.learn-practice{border:1px solid #564779;background:#211c34;border-radius:11px;margin:12px 0;overflow:hidden}
+.learn-practice>summary{padding:14px 16px;cursor:pointer;font-weight:650;color:#ecdaf9}
+.learn-practice>summary span{display:block;font-size:11px;font-weight:400;color:#aeaac5;margin-top:4px}
+.learn-practice-content{padding:14px}
+@media(max-width:780px){.learn-video-layout{grid-template-columns:1fr}.learn-video-list{max-height:none}.learn-fields{grid-template-columns:1fr 1fr}.learn-fields label:nth-child(2){grid-column:2}}
+@media(max-width:510px){.learn-mainlinks,.learn-fields{grid-template-columns:1fr}.learn-fields label:nth-child(2){grid-column:auto}.learn-video{padding:13px}.learn-trackchips{gap:4px}}

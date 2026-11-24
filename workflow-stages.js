@@ -41,8 +41,8 @@ function workflowReview(){
 function workflowCalendar(){
  const fmt=x=>new Date(x+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
  let rows=days.map((d,i)=>{
- const r=data.daily[d],done=r&&completed(d),sc=r?score(d):null,early=calendarMode()==='nyse'&&NYSE_EARLY_CLOSE[d];
- return '<button class="calendar-day '+(date===d?'current':'')+'" onclick="selectDate(\''+d+'\');go(\'dashboard\')"><b>Day '+(i+1)+'</b><span>'+fmt(d)+'</span>'+(early?'<span class="tag">'+esc(NYSE_EARLY_CLOSE[d])+'</span>':'')+'<small>'+(done?'✓ Complete':sc===null?'Not started':sc+'/100')+'</small></button>';
+ const r=data.daily[d],done=r&&completed(d),saved=!!r?.workflow?.finishedAt,sc=r?score(d):null,early=calendarMode()==='nyse'&&NYSE_EARLY_CLOSE[d];
+ return '<button class="calendar-day '+(date===d?'current':'')+'" onclick="selectDate(\''+d+'\');go(\'dashboard\')"><b>Day '+(i+1)+'</b><span>'+fmt(d)+'</span>'+(early?'<span class="tag">'+esc(NYSE_EARLY_CLOSE[d])+'</span>':'')+'<small>'+(done?'✓ Complete':saved?'✓ Saved':sc===null?'Not started':sc+'/100')+'</small></button>';
  }).join('');
  let exclusions=calendarExcludedWithin(start,days[59]);
  let skipped=exclusions.map(x=>'<span class="pill">'+fmt(x.date)+' · '+esc(x.reason)+'</span>').join('');

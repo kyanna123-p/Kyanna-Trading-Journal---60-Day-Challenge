@@ -14,7 +14,7 @@ function saveStage(id){if(!stages.some(x=>x[0]===id))return;state().quickStage=i
 function quickUpdate(table,id,key,value,refresh){
  if(table==='day')rec().notes[key]=value;
  else if(table==='workflow')state()[key]=value;
- else if(table==='ticker'){const t=planTicker(id);if(!t)return;t[key]=value}
+ else if(table==='ticker'){const t=planTicker(id);if(!t)return;const before=t.instrument;t[key]=value;if(key==='instrument'&&before!==value){for(const s of t.setups||[]){if(value==='Options'&&s.direction==='Long')s.direction='Call';else if(value==='Options'&&s.direction==='Short')s.direction='Put';else if(value!=='Options'&&s.direction==='Call')s.direction='Long';else if(value!=='Options'&&s.direction==='Put')s.direction='Short'}}}
  else if(table==='setup'){const [tid,sid]=id.split(':');const s=planSetup(tid,sid);if(!s)return;s[key]=value}
  save();if(refresh)renderOptions();
 }
@@ -46,7 +46,7 @@ function quickTap(action){
  const s=active.s;s.events=s.events||[];
  const once=['Confirmation','Entry','Add','Close','Stop out'];
  if(once.includes(action)&&s.events.some(x=>x.action===action))return;
- if(action==='Add'&&!s.events.some(x=>x.action==='Entry'))return;
+ if(action==='Add'&&(!s.events.some(x=>x.action==='Entry')||s.status==='Closed'))return;
  if(action==='Entry'&&s.status==='Closed')return;
  if(action==='Confirmation')s.status='Confirmed';
  if(action==='Entry')s.status='Entered';
@@ -57,7 +57,7 @@ function quickTap(action){
  state().market=true;
  save();renderOptions();renderDashboard();
 }
-function quickNoTrade(){state().noTrade=!state().noTrade;state().market=state().noTrade||allSetups().some(x=>x.s.events?.length);save();renderOptions();renderDashboard()}
+function quickNoTrade(){if(allSetups().some(x=>x.s.events?.some(e=>e.action==='Entry')))return;state().noTrade=!state().noTrade;state().market=state().noTrade||allSetups().some(x=>x.s.events?.length);save();renderOptions();renderDashboard()}
 function quickMark(id,next){state()[id]=true;state().quickStage=next;save();renderOptions();renderDashboard()}
 function quickReviewed(){state().quickReview=true;state().review=true;state().quickStage='review';save();renderOptions();renderDashboard()}
 function quickReviewGrade(key,v){rec().grades[key]=v;save();renderDashboard()}
@@ -146,7 +146,7 @@ function live(){
  input('Targets',c.tps,"quickUpdate('setup','"+current.id+"','tps',this.value,false)")+
  '</div></details></div>';
  }
- h+='<div class="qj-no-trade"><label class="qj-tick"><input type="checkbox" onchange="quickNoTrade()" '+(r.noTrade?'checked':'')+'> No trade today</label><span class="qj-sub">A valid decision, not a missed requirement.</span></div>'+
+ h+='<div class="qj-no-trade"><label class="qj-tick"><input type="checkbox" onchange="quickNoTrade()" '+(r.noTrade?'checked':'')+' '+(allSetups().some(x=>x.s.events?.some(e=>e.action==='Entry'))?'disabled':'')+'> No trade today</label><span class="qj-sub">A valid decision, not a missed requirement.</span></div>'+
  '<div class="qj-next"><button class="btn" onclick="saveStage(\'review\')">Go to review <span aria-hidden="true">→</span></button></div>';
  return h;
 }

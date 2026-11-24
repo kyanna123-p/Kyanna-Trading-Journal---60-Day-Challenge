@@ -90,15 +90,15 @@ function input(label,value,action,placeholder){return '<label class="qj-field"><
 /* Numbered checklists follow the attached Trading Plan/Execution PDF.
    Exactly three screenshots, one per session phase: night, premarket, review. */
 const nightSteps=[
- 'Mark nearby Daily and Weekly EMAs, move those stocks to watching list and set alerts',
+ 'Mark nearby Daily and Weekly EMAs, Move those stocks to watching list and set alerts',
  'Draw Demand Zones, make notes, set alerts',
  'Make zones on chart. State, position',
- 'Daily cycle position? Confirmed valley/peak? Noise candle? Trending?',
+ 'Daily cycle position? Confirmed valley/peak? noise candle? Trending?',
  'Screenshot Chart',
  'What am I focusing on tomorrow?'
 ];
 const executionSteps=[
- 'POWERBAR, TAILBAR (WITH LARGE WICK), OR BULL/BEAR 180 ABOVE OR BELOW MAs - ENTRY',
+ 'POWERBAR, TAILBAR(WITH LARGE WICK), OR BULL/BEAR 180 ABOVE OR BELOW MAs - ENTRY',
  'STOPLOSS BELOW ENTRY BAR',
  'COLOR CHANGE - ADD ONCE',
  '20 EMA 2 BAR BREAK - TAKE PROFIT'

@@ -1,0 +1,94 @@
+/* Source-based, one-screen trading journal. No nested scroll containers. */
+.qj-shell,.qj-dashboard{max-width:940px;margin:0 auto 18px;border:1px solid #544779;background:linear-gradient(135deg,rgba(27,28,52,.92),rgba(16,25,44,.94));border-radius:18px;overflow:hidden}
+.qj-shell *,.qj-dashboard *{box-sizing:border-box}
+.qj-top{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:18px 20px 12px}
+.qj-top h2{margin:0 0 3px;color:#f3e5ff;font-size:21px}
+.qj-top p{margin:0;color:#bec5d7;font-size:12px}
+.qj-progress{font-size:12px;white-space:nowrap;padding:5px 11px;border-radius:30px;border:1px solid #72608f;color:#e5d5fa;font-variant-numeric:tabular-nums}
+.qj-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:0 20px 14px;border-bottom:1px solid #4b4162}
+.qj-steps button{font:600 12px system-ui;color:#b8accf;display:flex;align-items:center;justify-content:center;gap:8px;min-height:43px;padding:6px 8px;border:1px solid #4d4363;border-radius:10px;background:#1d2139;cursor:pointer}
+.qj-steps button span{font-size:11px;display:inline-grid;place-items:center;width:23px;height:23px;border:1px solid #66587f;border-radius:50%}
+.qj-steps button.is-active{background:#544179;color:#fff;border-color:#a28ad0}
+.qj-body{padding:17px 20px 21px}
+.qj-head{margin:0 0 14px}
+.qj-head h2{font-size:18px;color:#f4ecff;margin:0 0 5px}
+.qj-head p{font-size:12px;line-height:1.55;color:#bdc6d5;max-width:680px;margin:0}
+.qj-add{display:flex;gap:9px;margin:12px 0 14px}
+.qj-add input{flex:1;min-width:0;margin:0;border:1px solid #675b84;border-radius:10px;padding:10px 13px;background:#131b2e;color:#fff;font:14px system-ui}
+.qj-shell .btn{font-size:13px;min-height:43px}
+.qj-symbol{padding:13px 14px;background:#1c243d;border:1px solid #494a6a;border-radius:13px;margin:11px 0}
+.qj-symbolhead{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.qj-symbolhead strong{color:#f3e8ff;font-size:16px}
+.qj-symbolbuttons{display:flex;gap:12px;align-items:center}
+.qj-quiet{background:none;border:0;padding:6px 0;color:#c6b7e9;cursor:pointer;font:600 12px system-ui;text-decoration:underline;text-underline-offset:3px}
+.qj-quiet.qj-danger{color:#eab4c1}
+.qj-row,.qj-no-trade{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:12px 0}
+.qj-sub{font-size:11px;color:#aebcd1;line-height:1.5}
+.qj-tick{display:inline-flex;gap:9px;align-items:center;font-size:12px;color:#ede7f6;cursor:pointer}
+.qj-tick input{width:17px;height:17px;accent-color:#c39ff8;margin:0;flex-shrink:0}
+.qj-setups{display:grid;gap:6px;margin-top:10px}
+.qj-setup{border:1px solid #494765;border-radius:11px;background:#181d34;padding:9px 11px}
+.qj-setupline{display:flex;align-items:end;gap:8px}
+.qj-setupline>.qj-field{flex:1}
+.qj-small-danger{min-width:28px;min-height:36px;background:transparent;border:0;color:#e9abbc;font-size:23px;cursor:pointer}
+.qj-field{display:grid;gap:5px;min-width:0;margin:0}
+.qj-field>span{font-size:11px;color:#c3bada;font-weight:600}
+.qj-field select,.qj-field input,.qj-field textarea{min-width:0;width:100%;min-height:40px;max-width:100%;margin:0;border:1px solid #5d5578;background:#11192d;border-radius:9px;padding:9px 10px;color:#f4f1fa;font:13px system-ui}
+.qj-field textarea{resize:vertical;line-height:1.4}
+.qj-field select:focus,.qj-field input:focus,.qj-field textarea:focus,.qj-add input:focus{outline:2px solid #b19ae1;outline-offset:1px}
+.qj-details{border-top:1px solid #484563;margin:10px 0 0;padding:7px 0 0}
+.qj-details>summary{color:#cbb8e5;font-size:12px;padding:5px 2px;cursor:pointer;font-weight:600;list-style:revert;background:transparent}
+.qj-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:8px 0}
+.qj-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.qj-four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;padding:8px 0}
+.qj-strip{padding:12px 14px;border-radius:12px;background:#211c35;border:1px solid #54476f;margin:15px 0}
+.qj-strip h3{font-size:13px;margin:0 0 8px;color:#ecdaf6}
+.qj-strip .field{margin:0}
+.qj-next{display:flex;justify-content:flex-end;margin:17px 0 0}
+.qj-empty{padding:15px 16px;border:1px dashed #7b638f;border-radius:12px;background:rgba(127,92,162,.09);font-size:13px;color:#d2c4e4}
+.qj-link{border:0;background:none;color:#decaff;font:inherit;text-decoration:underline;cursor:pointer}
+.qj-status{font-size:10px;font-weight:650;color:#d8ccea;border:1px solid #685c82;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.qj-status.ready{border-color:#429e82;color:#8fefcf}
+.qj-status.wait,.qj-caution{border-color:#b78556;color:#ffd1a3}
+.qj-caution{font-size:12px;padding:9px 10px;background:#3a2d35;border-left:3px solid #daac74;border-radius:4px}
+.qj-statusrow{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 0}
+.qj-statusrow>.qj-field{width:min(230px,60%)}
+.qj-choice{margin-bottom:12px}
+.qj-active{padding:15px;border:1px solid #5c4d79;border-radius:13px;background:#1b2239}
+.qj-active .qj-sub{margin:5px 0 0}
+.qj-actiongrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:15px 0}
+.qj-action{border:1px solid #78619d;border-radius:10px;background:#302a4a;color:#f6ecff;min-height:56px;padding:10px;font:650 12px/1.4 system-ui;cursor:pointer}
+.qj-action.tapped{border-color:#528d86;background:#20473f;color:#dcfff4}
+.qj-action:disabled{cursor:default;opacity:.65}
+.qj-history{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;color:#c9badb;margin:10px 0 2px}
+.qj-history span{padding:4px 8px;background:#2d2744;border-radius:20px}
+.qj-no-trade{margin-top:18px;background:#172138;border:1px solid #474666;border-radius:12px;padding:12px}
+.qj-review-summary{display:flex;flex-wrap:wrap;gap:12px;margin:9px 0;color:#dfccef;font-size:12px}
+.qj-review-summary span{border:1px solid #524366;background:#292139;border-radius:25px;padding:5px 10px}
+.qj-body>.qj-field{margin:12px 0}
+.qj-wellness{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 0}
+.qj-upload{padding:10px 0}
+.qj-review-img{display:block;width:min(100%,360px);height:auto;border-radius:8px;margin:10px 0}
+.qj-dashboard{padding:15px 20px 20px}
+.qj-dashboard .qj-top{padding:0 0 13px}
+.qj-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:10px 0}
+.qj-stats>div{display:flex;flex-direction:column;align-items:center;padding:13px 5px;background:#24213e;border:1px solid #504566;border-radius:12px}
+.qj-stats b{font-size:22px;color:#f2e6ff}
+.qj-stats span{font-size:11px;color:#b6b4ca}
+.qj-dashboard-focus{margin:16px 0;font-size:12px;color:#d5cee6}
+.qj-dashboard>.qj-sub{margin:12px 0 0}
+.qj-shell button:focus-visible{outline:3px solid #c4aaff;outline-offset:2px}
+@media(max-width:720px){
+ .qj-shell,.qj-dashboard{border-radius:14px}
+ .qj-body{padding:13px}
+ .qj-top{padding:14px 13px 10px}
+ .qj-steps{padding:0 12px 11px;gap:4px}
+ .qj-steps button{padding:7px 3px;font-size:10px;gap:3px;flex-direction:column;line-height:1.2}
+ .qj-steps button span{width:20px;height:20px}
+ .qj-add .btn{padding:9px 12px}
+ .qj-symbol{padding:11px}
+ .qj-three,.qj-four{grid-template-columns:1fr 1fr}
+ .qj-actiongrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .qj-wellness{grid-template-columns:1fr}
+}
+@media(max-width:410px){.qj-two,.qj-three,.qj-four{grid-template-columns:1fr}.qj-actiongrid{gap:7px}.qj-row{align-items:start}}

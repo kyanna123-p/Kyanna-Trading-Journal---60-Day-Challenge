@@ -86,17 +86,89 @@ function quickHealth(i,v){rec().checks['health'+i]=v;save()}
 function quickTag(text,selected,onclick){return '<button type="button" class="qj-chip '+(selected?'active':'')+'" onclick="'+onclick+'">'+escaped(text)+'</button>'}
 function drop(values,value,action,label){return '<label class="qj-field"><span>'+escaped(label)+'</span><select onchange="'+action+'">'+values.map(x=>'<option value="'+escaped(x)+'" '+(x===value?'selected':'')+'>'+escaped(x||'Choose…')+'</option>').join('')+'</select></label>'}
 function input(label,value,action,placeholder){return '<label class="qj-field"><span>'+escaped(label)+'</span><input value="'+escaped(value||'')+'" placeholder="'+escaped(placeholder||'')+'" onchange="'+action+'"></label>'}
+
+/* Numbered checklists follow the attached Trading Plan/Execution PDF.
+   Exactly three screenshots, one per session phase: night, premarket, review. */
+const nightSteps=[
+ 'Mark nearby Daily and Weekly EMAs, move those stocks to watching list and set alerts',
+ 'Draw Demand Zones, make notes, set alerts',
+ 'Make zones on chart. State, position',
+ 'Daily cycle position? Confirmed valley/peak? Noise candle? Trending?',
+ 'Screenshot Chart',
+ 'What am I focusing on tomorrow?'
+];
+const executionSteps=[
+ 'POWERBAR, TAILBAR (WITH LARGE WICK), OR BULL/BEAR 180 ABOVE OR BELOW MAs - ENTRY',
+ 'STOPLOSS BELOW ENTRY BAR',
+ 'COLOR CHANGE - ADD ONCE',
+ '20 EMA 2 BAR BREAK - TAKE PROFIT'
+];
+function checklistFlags(){const w=state();return w.nightChecklist||(w.nightChecklist={})}
+function checklistSetNight(index,checked){
+ if(index<0||index>=nightSteps.length)return;
+ checklistFlags()[index]=checked;
+ save();
+ const count=$('nightChecklistCount');
+ if(count)count.textContent=nightSteps.filter((_,i)=>!!checklistFlags()[i]).length+' / 6';
+}
+function checklistSetExecution(tid,sid,index,checked){
+ const s=planSetup(tid,sid);
+ if(!s||index<0||index>=executionSteps.length)return;
+ s.executionChecklist=s.executionChecklist||{};
+ s.executionChecklist[index]=checked;
+ save();
+ const count=$('executionChecklistCount');
+ if(count)count.textContent=executionSteps.filter((_,i)=>!!s.executionChecklist[i]).length+' / 4';
+}
+function checklistChart(source){return data.studies.find(x=>x.date===date&&x.source===source)}
+async function checklistSaveChart(source,id,type,step){
+ try{
+  const image=await imageFile(id);if(!image)return;
+  const existing=checklistChart(source);
+  if(existing)existing.image=image;
+  else data.studies.push({id:planId(),date,market:'Session',source,type,image});
+  if(typeof step==='number')checklistFlags()[step]=true;
+  save();renderOptions();
+ }catch(e){alert('Could not save screenshot. Please choose a smaller image.')}
+}
+function saveNightScreenshot(){return checklistSaveChart('quick-night-checklist','nightChecklistImage','Night prep chart',4)}
+function savePremarketScreenshot(){return checklistSaveChart('quick-premarket-checklist','premarketChecklistImage','Premarket chart')}
+function checklistScreenshot(source,inputId,action,caption){
+ const image=checklistChart(source)?.image;
+ return '<div class="qj-check-screenshot"><label class="qj-upload-label">'+escaped(caption)+
+ '<input id="'+inputId+'" type="file" accept="image/*" onchange="'+action+'()"></label>'+
+ (image?'<a href="'+escaped(image)+'" target="_blank" rel="noopener noreferrer" title="Open saved screenshot">'+
+ '<img class="qj-review-img" src="'+escaped(image)+'" alt="'+escaped(caption)+'"></a>':'')+'</div>';
+}
+function checklistNightMarkup(focus){
+ const flags=checklistFlags(),count=nightSteps.filter((_,i)=>flags[i]).length;
+ return '<section class="qj-numbered"><div class="qj-numbered-head"><h3>Night Prep Checklist</h3><span id="nightChecklistCount">'+count+' / 6</span></div>'+
+ nightSteps.map((step,i)=>'<div class="qj-numbered-step">'+
+ '<label class="qj-numbered-label"><input type="checkbox" '+(flags[i]?'checked':'')+' onchange="checklistSetNight('+i+',this.checked)">'+
+ '<b>'+(i+1)+'.</b><span>'+escaped(step)+'</span></label>'+
+ (i===4?checklistScreenshot('quick-night-checklist','nightChecklistImage','saveNightScreenshot','Night prep screenshot'):'')+
+ (i===5?'<div class="qj-check-extra">'+todayFocusDropdown(focus)+'</div>':'')+'</div>').join('')+
+ '</section>';
+}
+function checklistExecutionMarkup(tid,sid){
+ const s=planSetup(tid,sid);if(!s)return '';
+ const flags=s.executionChecklist||{},count=executionSteps.filter((_,i)=>flags[i]).length;
+ return '<section class="qj-numbered"><div class="qj-numbered-head"><h3>Execution Checklist</h3><span id="executionChecklistCount">'+count+' / 4</span></div>'+
+ executionSteps.map((step,i)=>'<label class="qj-numbered-label qj-numbered-execution">'+
+ '<input type="checkbox" '+(flags[i]?'checked':'')+
+ ' onchange="checklistSetExecution(\''+tid+'\',\''+sid+'\','+i+',this.checked)">'+
+ '<b>'+(i+1)+'.</b><span>'+escaped(step)+'</span></label>').join('')+'</section>';
+}
+
 function night(){
  const tickers=planDay().tickers,r=rec();
  let html='<div class="qj-head"><div><h2>Night prep · '+escaped(date)+'</h2><p>Build this session’s plan in advance. Mark your levels, zones and alerts. Each symbol can have multiple potential plays.</p></div></div>'+
  '<div class="qj-add"><input id="quickNewSymbol" aria-label="Add symbol" placeholder="Ticker / symbol (AAPL, MNQ…)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();quickSymbol()}"><button class="btn" onclick="quickSymbol()">+ Add symbol</button></div>';
  if(!tickers.length)html+='<div class="qj-empty">Add your first symbol. You only need to enter details relevant to tomorrow.</div>';
  for(const t of tickers){
- const check=t.nightChecked||false;
  html+='<article class="qj-symbol"><div class="qj-symbolhead"><strong>'+escaped(t.symbol)+'</strong>'+
  '<div class="qj-symbolbuttons"><button class="qj-quiet" onclick="quickAddSetup(\''+t.id+'\')">+ Setup</button><button class="qj-quiet qj-danger" onclick="quickRemoveSymbol(\''+t.id+'\')" aria-label="Remove '+escaped(t.symbol)+'">Remove</button></div></div>'+
- '<div class="qj-row"><label class="qj-tick"><input type="checkbox" '+(check?'checked':'')+' onchange="quickUpdate(\'ticker\',\''+t.id+'\',\'nightChecked\',this.checked,true)"> Levels, zones and alerts marked on chart</label>'+
- '<span class="qj-sub">'+(t.setups||[]).length+' setup'+((t.setups||[]).length===1?'':'s')+' watching</span></div>'+
+ '<p class="qj-sub">'+(t.setups||[]).length+' potential setup(s)</p>'+
  '<div class="qj-setups">'+(t.setups||[]).map(s=>'<div class="qj-setup"><div class="qj-setupline">'+
  drop(eventChoices,s.play,"quickUpdate('setup','"+t.id+':'+s.id+"','play',this.value,false)",'Potential event')+
  '<button class="qj-small-danger" title="Remove this setup" onclick="quickDeleteSetup(\''+t.id+'\',\''+s.id+'\')">×</button></div>'+
@@ -105,17 +177,16 @@ function night(){
  input('Entry confirmation',s.confirmation,"quickUpdate('setup','"+t.id+':'+s.id+"','confirmation',this.value,false)",'Event to confirm')+
  input('Stop below/above entry bar',s.sl,"quickUpdate('setup','"+t.id+':'+s.id+"','sl',this.value,false)",'Planned stop')+
  '</div></details></div>').join('')+'</div>'+
- '<details class="qj-details"><summary>Chart context &amp; screenshot (optional)</summary><div class="qj-three">'+
+ '<details class="qj-details"><summary>Chart context (optional)</summary><div class="qj-three">'+
  drop(['Stocks','Options','Futures','Forex','Crypto','Other'],t.instrument||'Stocks',"quickUpdate('ticker','"+t.id+"','instrument',this.value,true)",'Market')+
  input('Nearby daily/weekly EMAs',t.mas,"quickUpdate('ticker','"+t.id+"','mas',this.value,false)",'10 / 20 / 50 / 200')+
  input('Weekly zones',t.weekly,"quickUpdate('ticker','"+t.id+"','weekly',this.value,false)",'Nearby weekly level')+
  input('Daily zones',t.daily,"quickUpdate('ticker','"+t.id+"','daily',this.value,false)",'Nearby daily level')+
  input('Demand zones / state / position',t.context,"quickUpdate('ticker','"+t.id+"','context',this.value,false)",'Mark on chart')+
  drop(cycleChoices,t.cycle||'',"quickUpdate('ticker','"+t.id+"','cycle',this.value,false)",'Daily cycle')+
- '</div>'+planChartHtml(t)+'</details></article>';
+ '</div></details></article>';
  }
- html+='<section class="qj-strip"><h3>Tomorrow’s focus</h3>'+todayFocusDropdown(r.focus)+
- '<p class="qj-sub">Your focus is saved once for the day, not for every setup.</p></section>'+
+ html+=checklistNightMarkup(r.focus)+
  '<div class="qj-next"><button class="btn" onclick="quickMark(\'quickNight\',\'pre\')">Done planning <span aria-hidden="true">→</span></button></div>';
  return html;
 }
@@ -137,7 +208,10 @@ function premarket(){
  drop(['Watching','Premarket approved','Invalidated','Skipped'],s.status,"quickUpdate('setup','"+t.id+':'+s.id+"','status',this.value,true)",'Status')+'</div>').join('')+
  '</details></div>';
  }
- h+='<section class="qj-strip"><h3>Ready to observe</h3><p class="qj-sub">You do not have to take a trade. An unclear market can be a no-trade day.</p></section>'+
+ h+='<section class="qj-strip"><h3>Premarket chart</h3>'+
+ checklistScreenshot('quick-premarket-checklist','premarketChecklistImage','savePremarketScreenshot','Premarket screenshot')+
+ '</section>'+
+ '<section class="qj-strip"><h3>Ready to observe</h3><p class="qj-sub">You do not have to take a trade. An unclear market can be a no-trade day.</p></section>'+
  '<div class="qj-next"><button class="btn" onclick="quickMark(\'quickPremarket\',\'live\')">Premarket checked <span aria-hidden="true">→</span></button></div>';
  return h;
 }
@@ -152,6 +226,7 @@ function live(){
  '<p class="qj-sub">'+escaped(c.zone||'Zone from chart')+' · Stop: '+escaped(c.sl||'Below/above entry bar')+'</p></div>'+
  '<span class="qj-status">'+escaped(status)+'</span></div>'+
  (current.t.ema20&&current.t.ema20!=='Flat'?'<p class="qj-caution">20 EMA marked '+escaped(current.t.ema20)+'. Your plan says to execute from flat conditions only; reassess before entering.</p>':'')+
+ checklistExecutionMarkup(current.t.id,c.id)+
  '<div class="qj-actiongrid">'+
  [['Confirmation','Confirm'],['Entry','Entry'],['Add','Add once · color change'],['Close','Exit · 20 EMA 2-bar break'],['Stop out','Stopped'],['Skip','Skipped']].map(([key,label])=>{
  const tapped=done(key)||(key==='Skip'&&status==='Skipped'),disabled=(tapped||key==='Add'&&(!done('Entry')||done('Add'))||key==='Entry'&&status==='Closed');
@@ -253,7 +328,8 @@ completed=quickCompleted;
 render();
 Object.assign(window,{saveStage,quickUpdate,quickSetFocus,quickSymbol,quickAddSetup,
  quickDeleteSetup,quickRemoveSymbol,quickActiveSet,quickTap,quickNoTrade,
- quickMark,quickReviewed,quickReviewGrade,quickHealth,quickSaveReviewChart,quickNextSession,quickCurrentSession});
+ quickMark,quickReviewed,quickReviewGrade,quickHealth,quickSaveReviewChart,quickNextSession,quickCurrentSession,
+ checklistSetNight,checklistSetExecution,saveNightScreenshot,savePremarketScreenshot});
 const initialDay=quickSessionDay(quickToday());
 if(initialDay&&initialDay!==date)quickOpenSession(initialDay);
 if(window.addEventListener)window.addEventListener('focus',quickRollover);

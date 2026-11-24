@@ -259,13 +259,13 @@ function review(){
  '<label class="qj-field"><span>What went right / wrong? (optional)</span><textarea rows="2" placeholder="One sentence is enough" onchange="quickUpdate(\'day\',null,\'learned\',this.value,false)">'+escaped(r.notes.learned||'')+'</textarea></label>'+
  '<label class="qj-field"><span>What could I do better? (optional)</span><textarea rows="2" placeholder="One thing for next time" onchange="quickUpdate(\'day\',null,\'changes\',this.value,false)">'+escaped(r.notes.changes||'')+'</textarea></label>'+
  checklistScreenshot('quick-review','quickReviewImage','quickSaveReviewChart','Post-review screenshot')+
+ '<details class="qj-details"><summary>Mindset report card · four constraints (optional)</summary>'+ 
  '<div class="qj-constraint-reference" aria-label="Trading constraints reference"><span class="qj-ref-heading">Four constraints · quick reference</span><div class="qj-ref-grid">'+
  '<div><strong>Edge</strong><span>Only A+ / strong setups</span></div>'+
  '<div><strong>Execution</strong><span>Follow rules with discipline and precision</span></div>'+
  '<div><strong>Opportunity</strong><span>Read market conditions</span></div>'+
  '<div><strong>Risk</strong><span>Execute stop-losses as planned</span></div>'+
- '</div></div>'+ 
- '<details class="qj-details"><summary>Mindset report card · four constraints (optional)</summary><div class="qj-four">'+
+ '</div></div><div class="qj-four">'+
  categories.map(k=>drop(['','0','1','2','3','4'],String(r.grades[k]??''),"quickReviewGrade('"+k+"',this.value)",k)).join('')+'</div></details>'+
  '<details class="qj-details"><summary>Health reminders (sleep, nutrition, movement)</summary><div class="qj-wellness">'+
  keys.health.map((txt,i)=>'<label class="qj-tick"><input type="checkbox" '+(r.checks['health'+i]?'checked':'')+' onchange="quickHealth('+i+',this.checked)"> '+escaped(txt)+'</label>').join('')+

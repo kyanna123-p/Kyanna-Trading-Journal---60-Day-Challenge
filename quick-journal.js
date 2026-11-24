@@ -87,6 +87,8 @@ function night(){
  '<details class="qj-details"><summary>Chart context &amp; screenshot (optional)</summary><div class="qj-three">'+
  drop(['Stocks','Options','Futures','Forex','Crypto','Other'],t.instrument||'Stocks',"quickUpdate('ticker','"+t.id+"','instrument',this.value,true)",'Market')+
  input('Nearby daily/weekly EMAs',t.mas,"quickUpdate('ticker','"+t.id+"','mas',this.value,false)",'10 / 20 / 50 / 200')+
+ input('Weekly zones',t.weekly,"quickUpdate('ticker','"+t.id+"','weekly',this.value,false)",'Nearby weekly level')+
+ input('Daily zones',t.daily,"quickUpdate('ticker','"+t.id+"','daily',this.value,false)",'Nearby daily level')+
  input('Demand zones / state / position',t.context,"quickUpdate('ticker','"+t.id+"','context',this.value,false)",'Mark on chart')+
  drop(cycleChoices,t.cycle||'',"quickUpdate('ticker','"+t.id+"','cycle',this.value,false)",'Daily cycle')+
  '</div>'+planChartHtml(t)+'</details></article>';
@@ -128,6 +130,7 @@ function live(){
  '<div class="qj-active"><div class="qj-symbolhead"><div><strong>'+escaped(current.t.symbol)+' · '+escaped(c.play||'Setup')+'</strong>'+
  '<p class="qj-sub">'+escaped(c.zone||'Zone from chart')+' · Stop: '+escaped(c.sl||'Below/above entry bar')+'</p></div>'+
  '<span class="qj-status">'+escaped(status)+'</span></div>'+
+ (current.t.ema20&&current.t.ema20!=='Flat'?'<p class="qj-caution">20 EMA marked '+escaped(current.t.ema20)+'. Your plan says to execute from flat conditions only; reassess before entering.</p>':'')+
  '<div class="qj-actiongrid">'+
  [['Confirmation','Confirm'],['Entry','Entry'],['Add','Add once · color change'],['Close','Exit · 20 EMA 2-bar break'],['Stop out','Stopped'],['Skip','Skipped']].map(([key,label])=>{
  const tapped=done(key)||(key==='Skip'&&status==='Skipped'),disabled=(tapped||key==='Add'&&(!done('Entry')||done('Add'))||key==='Entry'&&status==='Closed');
@@ -183,7 +186,7 @@ async function quickSaveReviewChart(){
 function renderQuick(){
  const root=$('options');if(!root)return;
  const selected=stage();
- root.innerHTML='<div class="qj-shell"><div class="qj-top"><div><h2>Quick Journal</h2><p>'+escaped(date)+' · Minimal input. Your plans and trades save automatically.</p></div><span class="qj-progress">'+stages.findIndex(x=>x[0]===selected)+1+' / 4</span></div>'+
+ root.innerHTML='<div class="qj-shell"><div class="qj-top"><div><h2>Quick Journal</h2><p>'+escaped(date)+' · Minimal input. Your plans and trades save automatically.</p></div><span class="qj-progress">'+(stages.findIndex(x=>x[0]===selected)+1)+' / 4</span></div>'+
  '<nav class="qj-steps" aria-label="Trading workflow">'+stages.map(([id,label],i)=>'<button class="'+(selected===id?'is-active':'')+'" onclick="saveStage(\''+id+'\')"><span>'+String(i+1)+'</span> '+label+'</button>').join('')+'</nav>'+
  '<div class="qj-body">'+(selected==='night'?night():selected==='pre'?premarket():selected==='live'?live():review())+'</div></div>';
 }

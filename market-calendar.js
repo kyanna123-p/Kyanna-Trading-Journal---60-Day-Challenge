@@ -18,41 +18,7 @@ function changeCalendarMode(value){if(!['nyse','weekdays','daily'].includes(valu
 function changeCalendarExceptions(value){localStorage.setItem('tradecraft60-custom-closures',value);data.settings=data.settings||{};data.settings.calendarExclusions=value;save();calendarRebuild()}
 function calendarRebuild(){days=tradingDays();if(!days.includes(date)){date=days[0]}$('activeDate').value=date;$('dayLabel').textContent=days.includes(date)?'Day '+(days.indexOf(date)+1)+' / 60':'Outside challenge';render()}
 function calendarAdoptCloudSettings(){const settings=data.settings||{};let dirty=false;if(settings.calendarMode&&settings.calendarMode!==calendarMode()){localStorage.setItem('tradecraft60-calendar-mode',settings.calendarMode);dirty=true}if(typeof settings.calendarExclusions==='string'&&settings.calendarExclusions!==calendarCustomRaw()){localStorage.setItem('tradecraft60-custom-closures',settings.calendarExclusions);dirty=true}if(settings.challengeStart&&settings.challengeStart!==start){start=settings.challengeStart;localStorage.setItem('tradecraft60-start',start);dirty=true}if(dirty){days=tradingDays();if(!days.includes(date))date=days[0];$('activeDate').value=date;$('dayLabel').textContent='Day '+(days.indexOf(date)+1)+' / 60'}return dirty}
-function challengeStartDisplay(value){
- const parts=/^(\d{4})-(\d{2})-(\d{2})$/.exec(value||'');
- return parts?Number(parts[2])+'/'+Number(parts[3])+'/'+parts[1]:'';
-}
-function parseChallengeStartInput(value){
- const raw=String(value||'').trim();
- let year,month,day;
- let match=/^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(raw);
- if(match){year=Number(match[1]);month=Number(match[2]);day=Number(match[3])}
- else {
-  match=/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/.exec(raw);
-  if(!match)return null;
-  month=Number(match[1]);day=Number(match[2]);year=Number(match[3]);
- }
- if(year<1900||year>2100||month<1||month>12||day<1||day>31)return null;
- const parsed=new Date(year,month-1,day,12);
- if(parsed.getFullYear()!==year||parsed.getMonth()!==month-1||parsed.getDate()!==day)return null;
- return String(year).padStart(4,'0')+'-'+String(month).padStart(2,'0')+'-'+String(day).padStart(2,'0');
-}
-function changeChallengeStartFromText(raw){
- const parsed=parseChallengeStartInput(raw),message=document.getElementById('challengeStartValidation'),input=document.getElementById('challengeStartText');
- if(!parsed){
-  if(message)message.textContent='Enter a valid date, for example 11/30/2026.';
-  if(input)input.setAttribute('aria-invalid','true');
-  return;
- }
- if(message)message.textContent='';
- if(input)input.removeAttribute('aria-invalid');
- if(parsed===start){if(input)input.value=challengeStartDisplay(start);return}
- changeChallengeStart(parsed);
-}
-function calendarSettingsFields(){return `<div class="field"><label>Challenge start date</label><div class="challenge-start-controls">
-<label class="challenge-start-entry"><span>Type a date (MM/DD/YYYY)</span><input type="text" id="challengeStartText" inputmode="numeric" autocomplete="off" placeholder="MM/DD/YYYY" value="${challengeStartDisplay(start)}" onkeydown="if(event.key==='Enter'){event.preventDefault();changeChallengeStartFromText(this.value)}" onchange="changeChallengeStartFromText(this.value)" aria-describedby="challengeStartValidation"></label>
-<label class="challenge-start-entry"><span>Or select from calendar</span><input type="date" id="challengeStartPicker" value="${start}" onchange="changeChallengeStart(this.value)" onclick="if(this.showPicker){try{this.showPicker()}catch(e){}}"></label>
-</div><span class="challenge-start-error" id="challengeStartValidation" role="alert"></span></div>
+function calendarSettingsFields(){return `<div class="field"><label for="challengeStartPicker">Challenge start date</label><input type="date" id="challengeStartPicker" value="${start}" onchange="changeChallengeStart(this.value)" aria-label="Challenge start date" style="max-width:320px;width:100%"></div>
 <div class="field"><label>Which days count toward the 60 sessions?</label><select onchange="changeCalendarMode(this.value)">
 <option value="nyse" ${calendarMode()==='nyse'?'selected':''}>NYSE / Nasdaq · stocks & options (excludes published full closures)</option>
 <option value="weekdays" ${calendarMode()==='weekdays'?'selected':''}>Weekdays only · futures / forex / other (customize exclusions)</option>

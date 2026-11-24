@@ -121,3 +121,12 @@
 .qj-check-screenshot .qj-review-img{width:auto;max-width:145px;height:auto;max-height:110px;object-fit:contain;border-radius:8px;border:1px solid #77648b;display:block}
 .qj-check-screenshot a{display:block}
 @media(max-width:510px){.qj-numbered{padding:10px}.qj-numbered-label{gap:7px}.qj-check-extra,.qj-check-screenshot{padding-left:25px}}
+
+/* Compact four-constraint definitions visible above the optional review report card */
+.qj-constraint-reference{border:1px solid #514865;background:#1c2339;border-radius:11px;margin:14px 0 8px;padding:11px 12px}
+.qj-ref-heading{display:block;color:#d6c1ec;font-size:11px;font-weight:700;margin:0 0 9px}
+.qj-ref-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.qj-ref-grid>div{display:flex;flex-direction:column;gap:3px}
+.qj-ref-grid strong{color:#f2e7ff;font-size:12px}
+.qj-ref-grid span{color:#b9c4d5;font-size:11px;line-height:1.35}
+@media(max-width:680px){.qj-ref-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:12px}}

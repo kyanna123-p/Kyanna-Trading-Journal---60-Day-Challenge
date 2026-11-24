@@ -59,7 +59,28 @@ function quickTap(action){
 }
 function quickNoTrade(){if(allSetups().some(x=>x.s.events?.some(e=>e.action==='Entry')))return;state().noTrade=!state().noTrade;state().market=state().noTrade||allSetups().some(x=>x.s.events?.length);save();renderOptions();renderDashboard()}
 function quickMark(id,next){state()[id]=true;state().quickStage=next;save();renderOptions();renderDashboard()}
-function quickReviewed(){state().quickReview=true;state().review=true;state().quickStage='review';save();renderOptions();renderDashboard()}
+function quickReviewed(){const w=state();w.quickReview=true;w.review=true;w.quickStage='review';w.finishedAt=w.finishedAt||new Date().toISOString();save();renderOptions();renderDashboard()}
+function quickToday(){return iso(new Date())}
+function quickSessionDay(day){return days.find(d=>d>=day)||days[days.length-1]}
+function quickOpenSession(day){
+ if(!day||!days.includes(day))return;
+ selectDate(day);
+ const w=state();if(!w.quickStage)w.quickStage=w.quickNight?'pre':'night';
+ save();render();
+}
+function quickNextSession(){
+ const i=days.indexOf(date);
+ if(i>=0&&i<days.length-1){quickOpenSession(days[i+1]);go('options')}
+}
+function quickCurrentSession(){const d=quickSessionDay(quickToday());if(d){quickOpenSession(d);go('options')}}
+let quickLastLocalDate=quickToday();
+function quickRollover(){
+ const now=quickToday();
+ if(now===quickLastLocalDate)return;
+ quickLastLocalDate=now;
+ const next=quickSessionDay(now);
+ if(next&&next!==date)quickOpenSession(next);
+}
 function quickReviewGrade(key,v){rec().grades[key]=v;save();renderDashboard()}
 function quickHealth(i,v){rec().checks['health'+i]=v;save()}
 function quickTag(text,selected,onclick){return '<button type="button" class="qj-chip '+(selected?'active':'')+'" onclick="'+onclick+'">'+escaped(text)+'</button>'}
@@ -67,7 +88,7 @@ function drop(values,value,action,label){return '<label class="qj-field"><span>'
 function input(label,value,action,placeholder){return '<label class="qj-field"><span>'+escaped(label)+'</span><input value="'+escaped(value||'')+'" placeholder="'+escaped(placeholder||'')+'" onchange="'+action+'"></label>'}
 function night(){
  const tickers=planDay().tickers,r=rec();
- let html='<div class="qj-head"><div><h2>Build tomorrow’s watchlist</h2><p>Nearby daily/weekly MAs, demand zones and alerts. Each symbol can have multiple potential plays.</p></div></div>'+
+ let html='<div class="qj-head"><div><h2>Night prep · '+escaped(date)+'</h2><p>Build this session’s plan in advance. Mark your levels, zones and alerts. Each symbol can have multiple potential plays.</p></div></div>'+
  '<div class="qj-add"><input id="quickNewSymbol" aria-label="Add symbol" placeholder="Ticker / symbol (AAPL, MNQ…)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();quickSymbol()}"><button class="btn" onclick="quickSymbol()">+ Add symbol</button></div>';
  if(!tickers.length)html+='<div class="qj-empty">Add your first symbol. You only need to enter details relevant to tomorrow.</div>';
  for(const t of tickers){
@@ -171,7 +192,7 @@ function review(){
  '<details class="qj-details"><summary>Health reminders (sleep, nutrition, movement)</summary><div class="qj-wellness">'+
  keys.health.map((txt,i)=>'<label class="qj-tick"><input type="checkbox" '+(r.checks['health'+i]?'checked':'')+' onchange="quickHealth('+i+',this.checked)"> '+escaped(txt)+'</label>').join('')+
  '</div></details>'+
- '<div class="qj-next"><button class="btn" onclick="quickReviewed()">'+(w.quickReview?'✓ Review saved':'Finish review')+'</button></div>';
+ '<div class="qj-next"><button class="btn" onclick="quickReviewed()">'+(w.finishedAt?'✓ Day saved':'Finish & save day')+'</button>'+(w.finishedAt&&days.indexOf(date)<days.length-1?'<button class="btn secondary" onclick="quickNextSession()">Plan next session →</button>':'')+'</div>'+(w.finishedAt?'<p class="qj-sub" role="status">Saved for '+escaped(date)+'. This record stays in your Calendar and remains editable.</p>':'');
  return h;
 }
 function quickReviewChart(){return data.studies.find(x=>x.source==='quick-review'&&x.date===date)}
@@ -186,7 +207,7 @@ async function quickSaveReviewChart(){
 function renderQuick(){
  const root=$('options');if(!root)return;
  const selected=stage();
- root.innerHTML='<div class="qj-shell"><div class="qj-top"><div><h2>Quick Journal</h2><p>'+escaped(date)+' · Minimal input. Your plans and trades save automatically.</p></div><span class="qj-progress">'+(stages.findIndex(x=>x[0]===selected)+1)+' / 4</span></div>'+
+ root.innerHTML='<div class="qj-shell"><div class="qj-top"><div><h2>Quick Journal</h2><p>'+escaped(date)+' · Autosaved by session date.</p></div><div class="qj-header-actions"><button class="qj-today-link" onclick="quickCurrentSession()">Current session</button><span class="qj-progress">'+(stages.findIndex(x=>x[0]===selected)+1)+' / 4</span></div></div>'+
  '<nav class="qj-steps" aria-label="Trading workflow">'+stages.map(([id,label],i)=>'<button class="'+(selected===id?'is-active':'')+'" onclick="saveStage(\''+id+'\')"><span>'+String(i+1)+'</span> '+label+'</button>').join('')+'</nav>'+
  '<div class="qj-body">'+(selected==='night'?night():selected==='pre'?premarket():selected==='live'?live():review())+'</div></div>';
 }
@@ -232,5 +253,10 @@ completed=quickCompleted;
 render();
 Object.assign(window,{saveStage,quickUpdate,quickSetFocus,quickSymbol,quickAddSetup,
  quickDeleteSetup,quickRemoveSymbol,quickActiveSet,quickTap,quickNoTrade,
- quickMark,quickReviewed,quickReviewGrade,quickHealth,quickSaveReviewChart});
+ quickMark,quickReviewed,quickReviewGrade,quickHealth,quickSaveReviewChart,quickNextSession,quickCurrentSession});
+const initialDay=quickSessionDay(quickToday());
+if(initialDay&&initialDay!==date)quickOpenSession(initialDay);
+if(window.addEventListener)window.addEventListener('focus',quickRollover);
+if(document.addEventListener)document.addEventListener('visibilitychange',()=>{if(!document.hidden)quickRollover()});
+if(typeof setInterval==='function')setInterval(quickRollover,60000);
 })();
